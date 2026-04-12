@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Phase-5 NAME="Hardening and Verification" STATUS="done" VERSION="1.2.0">
+  <Goal>Close operational and regression risks with explicit test surfaces and runtime evidence expectations.</Goal>
+  <Modules>
+    <ModuleRef REF="M-INSTALL"/>
+    <ModuleRef REF="M-WEB-API"/>
+    <ModuleRef REF="M-EMAIL"/>
+    <ModuleRef REF="M-PROXY-ISSUE"/>
+  </Modules>
+  <Steps>
+    <step-1 STATUS="done">Define module-level verification files and commands.</step-1>
+    <step-2 STATUS="done">Define critical negative scenarios for email, token, and issuance failures.</step-2>
+    <step-3 STATUS="done">Define required log markers and operator evidence for the install and request flows.</step-3>
+    <step-4 STATUS="done">Confirm production-readiness gates before implementation execution.</step-4>
+  </Steps>
+  <ExitCriteria>
+    <Item>Verification surfaces cover critical flows and failure handling</Item>
+    <Item>Residual operational risks are explicitly documented</Item>
+  </ExitCriteria>
+</Phase-5>

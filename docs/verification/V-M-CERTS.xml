@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.4.0">
+  <test-files>
+    <file>tests/certs/validate_cert_strategy.sh</file>
+    <file>tests/certs/validate_cert_docs.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/certs/validate_cert_strategy.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/certs/validate_cert_docs.sh</check-2>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Apex and wildcard certificates exist at stable mount paths and are readable by the app container.</scenario-1>
+    <scenario-1b kind="success">When REG.RU credentials are present, DNS-01 is completed automatically without interactive TXT entry.</scenario-1b>
+    <scenario-2 kind="failure">DNS challenge prerequisites are missing and the installer stops with clear operator instructions.</scenario-2>
+    <scenario-3 kind="failure">Renewal failure is visible before live traffic breaks.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Wildcard certificate flow is explicit and not silently downgraded.</invariant-1>
+    <invariant-2>Certificate material persists across container restarts.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Writes certificate and renewal files to host storage.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-CERTS][bootstrap][SELECT_CHALLENGE]</marker-1>
+    <marker-2>[M-CERTS][bootstrap][REQUEST_CERT]</marker-2>
+    <marker-3>[M-CERTS][bootstrap][PERSIST_PATHS]</marker-3>
+    <marker-4>[M-CERTS][renew][RENEW_CERT]</marker-4>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Do not log provider credentials, tokens, or private key material.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Challenge selection and path rendering checks.</module-local>
+    <wave-level>Real certificate issuance on a disposable domain or staging endpoint.</wave-level>
+    <phase-level>443 edge serves valid TLS for portal and proxy routing.</phase-level>
+  </verification-levels>
+</V-M-CERTS>

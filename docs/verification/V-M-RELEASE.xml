@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" VERSION="1.7.0">
+  <test-files>
+    <file>tests/release/validate_dockerfile.sh</file>
+    <file>tests/release/validate_entrypoint.sh</file>
+    <file>tests/release/validate_rebar_project.sh</file>
+    <file>tests/release/validate_release_wrapper.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/release/validate_dockerfile.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/release/validate_entrypoint.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/release/validate_rebar_project.sh</check-3>
+    <check-4 evidence="deterministic">bash tests/release/validate_release_wrapper.sh</check-4>
+    <check-5 evidence="deterministic">rebar3 compile</check-5>
+    <check-6 evidence="integration">bash scripts/build_release.sh</check-6>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Unified release builds into a runnable container image with both portal and proxy capabilities.</scenario-1>
+    <scenario-2 kind="failure">Dependency or assembly conflicts fail during build rather than at first request.</scenario-2>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>One build artifact contains all required runtime components.</invariant-1>
+    <invariant-2>Release config can be injected from env at runtime.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Builds container image and release artifacts.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-RELEASE][build][FETCH_DEPS]</marker-1>
+    <marker-2>[M-RELEASE][build][ASSEMBLE_RELEASE]</marker-2>
+    <marker-3>[M-RELEASE][boot][START_RUNTIME]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Build logs must not bake secrets into image layers.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Release assembly and boot tests.</module-local>
+    <wave-level>Image build inside compose-ready environment.</wave-level>
+    <phase-level>Installer deploys a freshly built image successfully.</phase-level>
+  </verification-levels>
+</V-M-RELEASE>

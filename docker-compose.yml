@@ -1,0 +1,42 @@
+# FILE: docker-compose.yml
+# VERSION: 1.0.0
+# START_MODULE_CONTRACT
+#   PURPOSE: Define the foundational KPprotoN deployment topology used by install and runtime operations.
+#   SCOPE: Application service, build context, ports, env file, persistent mounts, and restart policy.
+#   DEPENDS: Dockerfile, deploy/.env.example
+#   LINKS: M-DEPLOY, M-RELEASE, M-CONFIG
+# END_MODULE_CONTRACT
+#
+# START_MODULE_MAP
+#   app service - future unified portal and proxy runtime
+# END_MODULE_MAP
+#
+# START_CHANGE_SUMMARY
+#   LAST_CHANGE: v1.0.0 - Added foundational compose topology with persistent data and certificate mounts.
+# END_CHANGE_SUMMARY
+
+# START_BLOCK_COMPOSE_ROOT
+services:
+  app:
+    image: ${APP_IMAGE:-kpproton:local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: ${COMPOSE_PROJECT_NAME:-kpproton}-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DETS_DATA_DIR: /var/lib/kpproton/dets
+      TOKEN_DATA_DIR: /var/lib/kpproton/tokens
+      KP_EDGE_MODE: shared-443
+      PORTAL_HTTP_INTERNAL_PORT: ${PORTAL_HTTP_INTERNAL_PORT:-8080}
+    ports:
+      - "443:443"
+      - "${PORTAL_HTTP_INTERNAL_PORT:-8080}:8080"
+    volumes:
+      - ${DATA_HOST_DIR:-./volumes/data}:/var/lib/kpproton
+      - ${CERTS_HOST_DIR:-/etc/letsencrypt}:/certs:ro
+    command: ["start"]
+# END_BLOCK_COMPOSE_ROOT

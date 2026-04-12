@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-DEPLOY NAME="Container Orchestration" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.2.0">
+  <Purpose>Build, run, and maintain the Docker Compose deployment topology for KPprotoN.</Purpose>
+  <Scope>
+    <Item>Define service topology and ports</Item>
+    <Item>Mount persistent data and certificate volumes</Item>
+    <Item>Support rebuild and restart workflows</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="docker-compose.yml" KIND="deployment-manifest">Primary container orchestration contract.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+    <DependsOn REF="M-RELEASE"/>
+  </Dependencies>
+  <Paths>
+    <Source>docker-compose.yml</Source>
+    <Tests>tests/deploy/</Tests>
+    <Verification>V-M-DEPLOY</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>docker-compose.yml</Artifact>
+    <Artifact>tests/deploy/validate_compose_manifest.sh</Artifact>
+    <Artifact>tests/deploy/validate_volume_contract.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Mis-mounted volumes can lose DETS or certificate state</Risk>
+    <Risk>Port 443 conflicts can break both web and proxy access</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-INSTALL" REL="executed-from"/>
+    <CrossLink REF="M-RELEASE" REL="runs-image-built-by"/>
+  </CrossLinks>
+</M-DEPLOY>

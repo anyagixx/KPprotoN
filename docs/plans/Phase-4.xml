@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Phase-4 NAME="Verification and Issuance" STATUS="done" VERSION="1.2.0">
+  <Goal>Turn a valid magic-link click into durable proxy issuance and a rendered `tg://proxy` result.</Goal>
+  <Modules>
+    <ModuleRef REF="M-WEB-API"/>
+    <ModuleRef REF="M-REGISTRY"/>
+    <ModuleRef REF="M-PROXY-ISSUE"/>
+    <ModuleRef REF="M-PROXY-BRIDGE"/>
+  </Modules>
+  <Steps>
+    <step-1 STATUS="done">Define `/verify` token-consumption behavior and HTML result rendering.</step-1>
+    <step-2 STATUS="done">Specify DETS persistence and lookup rules for user assignments in `M-REGISTRY`.</step-2>
+    <step-3 STATUS="done">Specify subdomain generation, idempotency, and link assembly in `M-PROXY-ISSUE`.</step-3>
+    <step-4 STATUS="done">Specify MTProto policy update sequencing through `M-PROXY-BRIDGE`.</step-4>
+  </Steps>
+  <ExitCriteria>
+    <Item>Verification path is consistent and replay-safe</Item>
+    <Item>Registry and proxy policy state transitions are deterministic</Item>
+  </ExitCriteria>
+</Phase-4>

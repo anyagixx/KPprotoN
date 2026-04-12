@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" VERSION="1.8.0">
+  <test-files>
+    <file>tests/http/validate_request_handler.sh</file>
+    <file>tests/http/validate_verify_contract.sh</file>
+    <file>tests/http/validate_http_negative_paths.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/http/validate_request_handler.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/http/validate_verify_contract.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/http/validate_http_negative_paths.sh</check-3>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">`/api/request` accepts a valid email and returns an accepted response without leaking issuance details.</scenario-1>
+    <scenario-2 kind="success">`/verify` consumes a valid token and returns the final proxy result page.</scenario-2>
+    <scenario-3 kind="failure">Invalid email, malformed token, expired token, or replay are rejected with stable status mapping and safe body content.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Token consumption is one-time from the HTTP edge perspective.</invariant-1>
+    <invariant-2>Error bodies remain human-readable without exposing secrets or internals.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Creates tokens, triggers email delivery, and initiates proxy issuance.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-WEB-API][request_email][VALIDATE_INPUT]</marker-1>
+    <marker-2>[M-WEB-API][request_email][DISPATCH_EMAIL]</marker-2>
+    <marker-3>[M-WEB-API][verify_token][CONSUME_TOKEN]</marker-3>
+    <marker-4>[M-WEB-API][verify_token][RENDER_RESULT]</marker-4>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Mask or hash emails in logs.</rule-1>
+    <rule-2>Never log full token values or proxy secrets.</rule-2>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Handler-level response and validation tests.</module-local>
+    <wave-level>Request-to-verify integration using fake Resend and token store.</wave-level>
+    <phase-level>Public HTTPS flow through portal and issuance path.</phase-level>
+  </verification-levels>
+  <production-gates>
+    <gate-1>Expired, malformed, and replayed verification paths never render a false success page.</gate-1>
+    <gate-2>Operator-facing logs distinguish request validation, dispatch, consume, and render phases.</gate-2>
+  </production-gates>
+</V-M-WEB-API>

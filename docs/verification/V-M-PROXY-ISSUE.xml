@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-PROXY-ISSUE MODULE="M-PROXY-ISSUE" PRIORITY="high" STATUS="done" VERSION="1.6.0">
+  <test-files>
+    <file>tests/provisioning/validate_proxy_issue_contract.sh</file>
+    <file>tests/provisioning/validate_proxy_issue_idempotency.sh</file>
+    <file>tests/provisioning/validate_proxy_issue_readiness.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_contract.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_idempotency.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_readiness.sh</check-3>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Verified email receives a unique SNI assignment and a valid `tg://proxy` link.</scenario-1>
+    <scenario-2 kind="success">Already issued user gets idempotent reuse rather than a second inconsistent assignment.</scenario-2>
+    <scenario-3 kind="failure">Policy update or persistence failure aborts final success rendering.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Generated SNI subdomain is unique within the registry.</invariant-1>
+    <invariant-2>Link assembly uses configured secret, host, and port consistently.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Allocates SNI domains and persists issuance state.</effect-1>
+    <effect-2>Triggers MTProto policy updates through `M-PROXY-BRIDGE`.</effect-2>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-PROXY-ISSUE][issue_proxy_for_email][GENERATE_SNI]</marker-1>
+    <marker-2>[M-PROXY-ISSUE][issue_proxy_for_email][PERSIST_ASSIGNMENT]</marker-2>
+    <marker-3>[M-PROXY-ISSUE][issue_proxy_for_email][BUILD_TG_LINK]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Never log full proxy secrets or full `tg://proxy` links in plaintext.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>SNI generation, idempotency, and link build tests.</module-local>
+    <wave-level>Issuance sequence with registry and proxy-bridge doubles.</wave-level>
+    <phase-level>User verifies email and immediately receives a working client link.</phase-level>
+  </verification-levels>
+  <production-gates>
+    <gate-1>Idempotent reissue must return `reuse` rather than allocating a second SNI.</gate-1>
+    <gate-2>Fresh issuance must emit `apply_domain_policy` before a success page can be considered valid.</gate-2>
+  </production-gates>
+</V-M-PROXY-ISSUE>

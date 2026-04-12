@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-WEB-UI NAME="Portal UI" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.2.0">
+  <Purpose>Render the public portal that collects email input and shows request or verification outcomes.</Purpose>
+  <Scope>
+    <Item>Minimal HTML/CSS/JS pages served by Cowboy</Item>
+    <Item>Email form, loading state, and "Проверьте почту" response</Item>
+    <Item>Final success and error pages after verification</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="GET /" KIND="html-page">Email-first landing page.</Interface>
+    <Interface NAME="verify-result-page" KIND="html-page">Displays final proxy link or a human-readable error.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-WEB-API"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/priv/static/</Source>
+    <Tests>tests/ui/</Tests>
+    <Verification>V-M-WEB-UI</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/priv/static/index.html</Artifact>
+    <Artifact>apps/kpproton_portal/priv/static/styles.css</Artifact>
+    <Artifact>apps/kpproton_portal/priv/static/request.js</Artifact>
+    <Artifact>tests/ui/validate_landing_page.sh</Artifact>
+    <Artifact>tests/ui/validate_request_state.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Frontend state can become misleading if backend errors are not surfaced clearly</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-WEB-API" REL="calls"/>
+  </CrossLinks>
+</M-WEB-UI>

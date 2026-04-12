@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-REGISTRY NAME="Proxy Registry" TYPE="DATA_LAYER" STATUS="done" VERSION="1.4.0">
+  <Purpose>Persist verified users and their assigned proxy metadata in DETS.</Purpose>
+  <Scope>
+    <Item>Store email, generated SNI domain, and issuance metadata</Item>
+    <Item>Support lookup by email and possibly by token-derived identity</Item>
+    <Item>Persist state across service restarts</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="lookup_user" KIND="service-api">Returns an existing issued proxy if present.</Interface>
+    <Interface NAME="save_user" KIND="service-api">Commits verified user and proxy assignment to DETS.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_proxy/src/registry/</Source>
+    <Tests>tests/registry/</Tests>
+    <Verification>V-M-REGISTRY</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_proxy/src/registry/kpproton_registry.erl</Artifact>
+    <Artifact>tests/registry/validate_registry_contract.sh</Artifact>
+    <Artifact>tests/registry/validate_registry_persistence.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>DETS corruption or bad path handling can lose user state</Risk>
+    <Risk>Concurrent writes require disciplined access patterns</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-PROXY-ISSUE" REL="persists-through"/>
+    <CrossLink REF="M-WEB-API" REL="read-by"/>
+  </CrossLinks>
+</M-REGISTRY>

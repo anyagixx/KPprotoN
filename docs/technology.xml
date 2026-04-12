@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-Technology VERSION="1.0.0">
+  <Project NAME="KPprotoN"/>
+
+  <Stack>
+    <PrimaryLanguage>Erlang</PrimaryLanguage>
+    <Runtime>OTP release</Runtime>
+    <WebFramework>Cowboy</WebFramework>
+    <CoreDependencies>
+      <Item>`seriyps/mtproto_proxy` as proxy engine baseline</Item>
+      <Item>`seriyps/personal_mtproxy` as portal baseline</Item>
+      <Item>DETS for single-node persistence</Item>
+      <Item>Docker Engine and Docker Compose plugin</Item>
+      <Item>Let's Encrypt / Certbot for TLS lifecycle</Item>
+      <Item>Resend HTTP API for email delivery</Item>
+    </CoreDependencies>
+  </Stack>
+
+  <DeploymentModel>
+    <Host>Ubuntu 22.04 or Ubuntu 24.04 VPS</Host>
+    <Topology>Single-node deployment with persistent Docker volumes</Topology>
+    <Ingress>Port 443 for web and MTProto domain fronting</Ingress>
+    <Persistence>Mounted volumes for DETS files and TLS certificates</Persistence>
+  </DeploymentModel>
+
+  <TestingStrategy>
+    <Unit>eunit or common_test for Erlang modules</Unit>
+    <Integration>HTTP endpoint checks and token-to-issuance flow validation</Integration>
+    <Operational>docker compose smoke test and install script verification</Operational>
+  </TestingStrategy>
+
+  <Observability>
+    <Item>OTP supervisors for process recovery</Item>
+    <Item>Structured application and container logs</Item>
+    <Item>Explicit operator-facing install output</Item>
+  </Observability>
+
+  <DecisionLog>
+    <Decision ID="TD-001">Keep Erlang-native integration preferred over adding a separate web microservice.</Decision>
+    <Decision ID="TD-002">Use DETS because the target topology is a single VPS with low operational overhead.</Decision>
+    <Decision ID="TD-003">Treat wildcard certificate provisioning as an explicit operational risk because DNS-01 is likely required.</Decision>
+    <Decision ID="TD-004">Expose user-friendly errors for Resend and verification failures instead of silent fallback behavior.</Decision>
+  </DecisionLog>
+</MyGRACE-Technology>

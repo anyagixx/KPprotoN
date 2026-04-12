@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-WEB-UI MODULE="M-WEB-UI" PRIORITY="medium" STATUS="done" VERSION="1.3.0">
+  <test-files>
+    <file>tests/ui/validate_landing_page.sh</file>
+    <file>tests/ui/validate_request_state.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/ui/validate_landing_page.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/ui/validate_request_state.sh</check-2>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Landing page renders email-first UX and transitions to "Проверьте почту" after accepted submission.</scenario-1>
+    <scenario-2 kind="failure">Backend delivery or verification failures are rendered as clear user-facing errors.</scenario-2>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>User never receives proxy details before email verification succeeds.</invariant-1>
+    <invariant-2>UI state reflects backend outcome without ambiguous success messaging.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Triggers HTTP calls to `M-WEB-API` from browser JS.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-WEB-UI][submit][REQUEST_PROXY]</marker-1>
+    <marker-2>[M-WEB-UI][state][SHOW_CHECK_EMAIL]</marker-2>
+    <marker-3>[M-WEB-UI][state][SHOW_ERROR]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Client telemetry must not emit full email addresses without masking.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Static rendering and client state tests.</module-local>
+    <wave-level>Browser-driven form submission against local backend.</wave-level>
+    <phase-level>User walks from portal to verified result page without broken states.</phase-level>
+  </verification-levels>
+</V-M-WEB-UI>

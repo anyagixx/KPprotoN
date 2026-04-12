@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-TOKEN NAME="Verification Token Store" TYPE="DATA_LAYER" STATUS="done" VERSION="1.2.0">
+  <Purpose>Store one-time verification tokens with expiration semantics for the email confirmation flow.</Purpose>
+  <Scope>
+    <Item>Create token records bound to email addresses</Item>
+    <Item>Enforce TTL and one-time consumption</Item>
+    <Item>Provide cleanup behavior for expired tokens</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="create_token" KIND="service-api">Returns token and expiration metadata.</Interface>
+    <Interface NAME="consume_token" KIND="service-api">Atomically validates and deletes a token.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/src/token/</Source>
+    <Tests>tests/token/</Tests>
+    <Verification>V-M-TOKEN</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/src/token/kpproton_token_store.erl</Artifact>
+    <Artifact>tests/token/validate_token_contract.sh</Artifact>
+    <Artifact>tests/token/validate_token_expiry.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Non-atomic consumption would allow replay</Risk>
+    <Risk>Unbounded token growth without cleanup</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-WEB-API" REL="used-by"/>
+  </CrossLinks>
+</M-TOKEN>

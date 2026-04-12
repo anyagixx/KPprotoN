@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-TOKEN MODULE="M-TOKEN" PRIORITY="high" STATUS="done" VERSION="1.3.0">
+  <test-files>
+    <file>tests/token/validate_token_contract.sh</file>
+    <file>tests/token/validate_token_expiry.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/token/validate_token_contract.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/token/validate_token_expiry.sh</check-2>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Token creation returns unique values tied to email and expiration metadata.</scenario-1>
+    <scenario-2 kind="failure">Expired tokens are rejected after TTL elapses.</scenario-2>
+    <scenario-3 kind="failure">Reused tokens fail atomically without double consumption.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Consume is atomic and one-time.</invariant-1>
+    <invariant-2>Cleanup prevents unbounded token growth.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Stores ephemeral verification state in memory or DETS-backed structures.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-TOKEN][create][STORE_TOKEN]</marker-1>
+    <marker-2>[M-TOKEN][consume][DELETE_TOKEN]</marker-2>
+    <marker-3>[M-TOKEN][expire][PURGE_EXPIRED]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Never emit raw tokens in logs.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Deterministic create/consume/expire tests.</module-local>
+    <wave-level>Used through `M-WEB-API` with synthetic timestamps.</wave-level>
+    <phase-level>Replay-safe verification in public flow.</phase-level>
+  </verification-levels>
+</V-M-TOKEN>

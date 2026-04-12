@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.7.0">
+  <Purpose>Expose Cowboy routes for request intake, token verification, health checks, and HTML responses.</Purpose>
+  <Scope>
+    <Item>Implement `/api/request` and `/verify?token=...`</Item>
+    <Item>Validate inputs and map errors to user-readable responses</Item>
+    <Item>Coordinate token, email, registry, and provisioning workflows</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="POST /api/request" KIND="json-api">Accepts email and triggers magic-link delivery.</Interface>
+    <Interface NAME="GET /verify" KIND="html-endpoint">Consumes token and renders final result.</Interface>
+    <Interface NAME="GET /health" KIND="ops-endpoint">Simple service health indicator.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-TOKEN"/>
+    <DependsOn REF="M-EMAIL"/>
+    <DependsOn REF="M-PROXY-ISSUE"/>
+    <DependsOn REF="M-REGISTRY"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/src/http/</Source>
+    <Tests>tests/http/</Tests>
+    <Verification>V-M-WEB-API</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/src/http/kpproton_request_handler.erl</Artifact>
+    <Artifact>apps/kpproton_portal/src/http/kpproton_verify_handler.erl</Artifact>
+    <Artifact>apps/kpproton_portal/src/http/kpproton_health_handler.erl</Artifact>
+    <Artifact>tests/http/validate_request_handler.sh</Artifact>
+    <Artifact>tests/http/validate_verify_contract.sh</Artifact>
+    <Artifact>tests/http/validate_http_negative_paths.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Replay or malformed token handling can leak inconsistent state</Risk>
+    <Risk>Backend errors must not expose secrets</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-WEB-UI" REL="serves"/>
+    <CrossLink REF="M-TOKEN" REL="creates-and-consumes"/>
+    <CrossLink REF="M-EMAIL" REL="dispatches-through"/>
+    <CrossLink REF="M-PROXY-ISSUE" REL="issues-proxy-via"/>
+  </CrossLinks>
+</M-WEB-API>

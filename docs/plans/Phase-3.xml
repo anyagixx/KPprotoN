@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Phase-3 NAME="Email Request Flow" STATUS="done" VERSION="1.2.0">
+  <Goal>Implement the request side of the portal so a user can submit an email and receive a magic link.</Goal>
+  <Modules>
+    <ModuleRef REF="M-WEB-UI"/>
+    <ModuleRef REF="M-WEB-API"/>
+    <ModuleRef REF="M-TOKEN"/>
+    <ModuleRef REF="M-EMAIL"/>
+  </Modules>
+  <Steps>
+    <step-1 STATUS="done">Define the landing page and submission UX in `M-WEB-UI`.</step-1>
+    <step-2 STATUS="done">Design `POST /api/request` input validation and response contract in `M-WEB-API`.</step-2>
+    <step-3 STATUS="done">Specify token lifecycle and cleanup behavior in `M-TOKEN`.</step-3>
+    <step-4 STATUS="done">Specify Resend request/response mapping and failure normalization in `M-EMAIL`.</step-4>
+  </Steps>
+  <ExitCriteria>
+    <Item>Email request path is fully specified end-to-end</Item>
+    <Item>User-facing and operator-facing errors are defined</Item>
+  </ExitCriteria>
+</Phase-3>

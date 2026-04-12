@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Phase-2 NAME="Edge and Install Path" STATUS="done" VERSION="1.2.0">
+  <Goal>Make the deployment reproducible from a clean VPS while securing the 443 edge for both portal and proxy traffic.</Goal>
+  <Modules>
+    <ModuleRef REF="M-INSTALL"/>
+    <ModuleRef REF="M-CERTS"/>
+    <ModuleRef REF="M-PROXY-BRIDGE"/>
+  </Modules>
+  <Steps>
+    <step-1 STATUS="done">Design the interactive `install.sh` operator flow and idempotent rerun behavior.</step-1>
+    <step-2 STATUS="done">Choose and document the wildcard certificate acquisition workflow.</step-2>
+    <step-3 STATUS="done">Define how domain fronting and HTTPS coexist on port 443.</step-3>
+    <step-4 STATUS="done">Bind certificate mounts and proxy edge config into the deployment contract.</step-4>
+  </Steps>
+  <ExitCriteria>
+    <Item>Installer flow is operationally coherent</Item>
+    <Item>443 edge routing strategy is explicit</Item>
+  </ExitCriteria>
+</Phase-2>

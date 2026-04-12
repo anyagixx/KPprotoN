@@ -1,0 +1,19 @@
+{application, kpproton,
+ [
+  {description, "KPprotoN runnable skeleton"},
+  {vsn, "0.1.0"},
+  {registered, [kpproton_runtime]},
+  {mod, {kpproton_app, []}},
+  {applications, [
+      kernel,
+      stdlib,
+      crypto,
+      ssl,
+      inets,
+      ranch,
+      cowlib,
+      cowboy,
+      jsx
+  ]},
+  {env, []}
+ ]}.

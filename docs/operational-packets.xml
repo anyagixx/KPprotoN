@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-OperationalPackets VERSION="1.0.0">
+  <PacketTemplates>
+    <ExecutionPacket ID="OP-EXEC-001" NAME="Implementation Wave">
+      <RequiredInputs>
+        <Item>docs/graph-index.xml</Item>
+        <Item>Relevant docs/modules/M-XXX.xml files only</Item>
+        <Item>Relevant docs/plans/Phase-N.xml file only</Item>
+        <Item>Relevant docs/verification/V-M-XXX.xml files only</Item>
+      </RequiredInputs>
+      <OutputContract>
+        <Item>Code changes aligned with module contracts</Item>
+        <Item>Updated graph, plan, and verification indexes if interfaces changed</Item>
+        <Item>Verification evidence captured</Item>
+      </OutputContract>
+    </ExecutionPacket>
+
+    <ReviewPacket ID="OP-REV-001" NAME="Architecture and Regression Review">
+      <Focus>
+        <Item>Contract drift</Item>
+        <Item>Cross-module dependency mistakes</Item>
+        <Item>Error handling and recovery</Item>
+        <Item>Verification gaps</Item>
+      </Focus>
+    </ReviewPacket>
+
+    <OpsPacket ID="OP-OPS-001" NAME="Deployment and Runtime Readiness">
+      <Focus>
+        <Item>Install path reproducibility</Item>
+        <Item>Certificate management and renewal</Item>
+        <Item>Persistent storage mounts for DETS and certificates</Item>
+        <Item>443/tcp routing and health validation</Item>
+      </Focus>
+    </OpsPacket>
+  </PacketTemplates>
+</MyGRACE-OperationalPackets>

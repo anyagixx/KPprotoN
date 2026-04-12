@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-EMAIL MODULE="M-EMAIL" PRIORITY="high" STATUS="done" VERSION="1.6.0">
+  <test-files>
+    <file>tests/resend/validate_resend_adapter.sh</file>
+    <file>tests/resend/validate_resend_errors.sh</file>
+    <file>tests/resend/validate_resend_operator_evidence.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/resend/validate_resend_adapter.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/resend/validate_resend_errors.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/resend/validate_resend_operator_evidence.sh</check-3>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Resend accepts the magic-link payload and returns a delivery identifier.</scenario-1>
+    <scenario-2 kind="failure">401 is mapped to an operator-actionable credential error.</scenario-2>
+    <scenario-3 kind="failure">429, 500, and timeout conditions are mapped to retryable delivery failures.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Email payload contains a verification URL rooted at `https://BASE_DOMAIN/verify`.</invariant-1>
+    <invariant-2>Provider-specific errors are normalized before reaching HTTP handlers.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Calls external Resend HTTP API.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-EMAIL][send_magic_link][BUILD_REQUEST]</marker-1>
+    <marker-2>[M-EMAIL][send_magic_link][POST_RESEND]</marker-2>
+    <marker-3>[M-EMAIL][send_magic_link][MAP_PROVIDER_ERROR]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Never log `RESEND_API_KEY` or full message bodies.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Request build and error mapping tests.</module-local>
+    <wave-level>Adapter exercised against mocked provider responses.</wave-level>
+    <phase-level>Email request flow shows correct user and operator behavior under provider failures.</phase-level>
+  </verification-levels>
+  <production-gates>
+    <gate-1>Credential failure, provider throttling, and provider outage are distinguishable in operator evidence.</gate-1>
+    <gate-2>Magic-link payload always targets `https://BASE_DOMAIN/verify` and never leaks API credentials.</gate-2>
+  </production-gates>
+</V-M-EMAIL>

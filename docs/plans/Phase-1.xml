@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Phase-1 NAME="Foundation" STATUS="done" VERSION="1.1.0">
+  <Goal>Establish the shared runtime, build, and deployment contracts before implementing feature logic.</Goal>
+  <Modules>
+    <ModuleRef REF="M-CONFIG"/>
+    <ModuleRef REF="M-RELEASE"/>
+    <ModuleRef REF="M-DEPLOY"/>
+  </Modules>
+  <Steps>
+    <step-1 STATUS="done">Define environment variables, secrets, paths, and shared config contracts in `M-CONFIG`.</step-1>
+    <step-2 STATUS="done">Design the unified Erlang release and Docker image strategy in `M-RELEASE`.</step-2>
+    <step-3 STATUS="done">Define the Compose topology, volumes, and network exposure in `M-DEPLOY`.</step-3>
+    <step-4 STATUS="done">Confirm that the resulting runtime shape can host both Cowboy and MTProto behaviors.</step-4>
+  </Steps>
+  <ExitCriteria>
+    <Item>Config surface is unambiguous</Item>
+    <Item>Build artifact and container topology are agreed</Item>
+  </ExitCriteria>
+</Phase-1>

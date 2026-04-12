@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" VERSION="1.5.0">
+  <Purpose>Translate a verified email into a durable, user-specific MTProto proxy assignment and final client link.</Purpose>
+  <Scope>
+    <Item>Generate a unique SNI subdomain such as `hex.base-domain`</Item>
+    <Item>Create a `tg://proxy?...` link from runtime config and assignment data</Item>
+    <Item>Ensure idempotent issuance for already verified users</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="issue_proxy_for_email" KIND="service-api">Returns issued proxy metadata for a verified email.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-REGISTRY"/>
+    <DependsOn REF="M-CONFIG"/>
+    <DependsOn REF="M-PROXY-BRIDGE"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_proxy/src/provisioning/</Source>
+    <Tests>tests/provisioning/</Tests>
+    <Verification>V-M-PROXY-ISSUE</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_proxy/src/provisioning/kpproton_proxy_issue.erl</Artifact>
+    <Artifact>tests/provisioning/validate_proxy_issue_contract.sh</Artifact>
+    <Artifact>tests/provisioning/validate_proxy_issue_idempotency.sh</Artifact>
+    <Artifact>tests/provisioning/validate_proxy_issue_readiness.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>SNI collisions or malformed links break client onboarding</Risk>
+    <Risk>Partial failure between policy update and persistence can desynchronize state</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-REGISTRY" REL="writes-to"/>
+    <CrossLink REF="M-PROXY-BRIDGE" REL="applies-policy-via"/>
+  </CrossLinks>
+</M-PROXY-ISSUE>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-REGISTRY MODULE="M-REGISTRY" PRIORITY="high" STATUS="done" VERSION="1.5.0">
+  <test-files>
+    <file>tests/registry/validate_registry_contract.sh</file>
+    <file>tests/registry/validate_registry_persistence.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/registry/validate_registry_contract.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/registry/validate_registry_persistence.sh</check-2>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Verified user assignments persist across service restart and can be looked up by email.</scenario-1>
+    <scenario-2 kind="failure">Bad DETS path or open failure is surfaced before issuance returns success.</scenario-2>
+    <scenario-3 kind="failure">Concurrent writes do not corrupt state or lose assignments.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>One email maps deterministically to one stored assignment.</invariant-1>
+    <invariant-2>Persistence happens before final user success is rendered.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Opens and writes DETS files on persistent storage.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-REGISTRY][open][OPEN_DETS]</marker-1>
+    <marker-2>[M-REGISTRY][lookup_user][LOOKUP_EMAIL]</marker-2>
+    <marker-3>[M-REGISTRY][save_user][WRITE_ASSIGNMENT]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Mask emails and never log full proxy URLs from registry operations.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Lookup/save behavior with deterministic fixtures.</module-local>
+    <wave-level>Restart persistence and corruption handling tests.</wave-level>
+    <phase-level>Issued proxy remains stable across deploy restarts.</phase-level>
+  </verification-levels>
+</V-M-REGISTRY>

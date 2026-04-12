@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.5.0">
+  <test-files>
+    <file>tests/install/validate_install_contract.sh</file>
+    <file>tests/install/validate_install_syntax.sh</file>
+    <file>tests/install/validate_install_readiness.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/install/validate_install_contract.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/install/validate_install_syntax.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/install/validate_install_readiness.sh</check-3>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Fresh Ubuntu host completes install and prints the final portal URL.</scenario-1>
+    <scenario-1b kind="success">Fresh Ubuntu host auto-provisions REG.RU wildcard certificates when provider credentials are pre-exported.</scenario-1b>
+    <scenario-2 kind="failure">Invalid domain, missing sudo, or interrupted package install returns actionable operator guidance.</scenario-2>
+    <scenario-3 kind="failure">Rerun after partial install remains idempotent and does not corrupt `.env` or volumes.</scenario-3>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Installer prompts only for `BASE_DOMAIN` and `RESEND_API_KEY`.</invariant-1>
+    <invariant-2>Generated proxy secret and env file are persisted before compose startup.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Installs Docker packages on the host.</effect-1>
+    <effect-2>Creates `.env`, certificate paths, and starts containers.</effect-2>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-INSTALL][run][VALIDATE_INPUT]</marker-1>
+    <marker-2>[M-INSTALL][run][DOCKER_BOOTSTRAP]</marker-2>
+    <marker-3>[M-INSTALL][run][CERTS_BOOTSTRAP]</marker-3>
+    <marker-4>[M-INSTALL][run][COMPOSE_UP]</marker-4>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Never log `RESEND_API_KEY`, proxy secret, or full `.env` contents.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Script lint and isolated smoke checks.</module-local>
+    <wave-level>Install plus certificate bootstrap plus compose start on a disposable host.</wave-level>
+    <phase-level>End-to-end bootstrap reaching portal health on `https://BASE_DOMAIN`.</phase-level>
+  </verification-levels>
+  <production-gates>
+    <gate-1>Installer blocks on missing wildcard DNS-01 prerequisites instead of faking success.</gate-1>
+    <gate-2>Final portal URL is emitted only after compose startup is invoked.</gate-2>
+  </production-gates>
+</V-M-INSTALL>

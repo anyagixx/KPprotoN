@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-GraphIndex VERSION="1.0.0">
+  <Project NAME="KPprotoN" STATUS="bootstrap" PRIMARY_LANGUAGE="Erlang">
+    <Annotation>
+      Готовая инфраструктура под ключ для развёртывания персональных MTProto-прокси:
+      объединённый mtproto_proxy + personal_mtproxy с email-верификацией через Resend,
+      Docker-развёртыванием и автоматизацией установки на чистый Ubuntu VPS.
+    </Annotation>
+    <Keywords>
+      <Keyword>mtproto</Keyword>
+      <Keyword>telegram-proxy</Keyword>
+      <Keyword>erlang</Keyword>
+      <Keyword>cowboy</Keyword>
+      <Keyword>domain-fronting</Keyword>
+      <Keyword>dets</Keyword>
+      <Keyword>docker</Keyword>
+      <Keyword>devops</Keyword>
+      <Keyword>resend</Keyword>
+      <Keyword>email-verification</Keyword>
+      <Keyword>letsencrypt</Keyword>
+      <Keyword>ubuntu-22.04</Keyword>
+      <Keyword>ubuntu-24.04</Keyword>
+    </Keywords>
+    <Runtime>
+      <Primary>OTP / Erlang release</Primary>
+      <Supporting>Docker Compose on Ubuntu 22.04/24.04</Supporting>
+      <Web> Cowboy HTTP server behind domain fronting on :443 </Web>
+      <Persistence>DETS</Persistence>
+    </Runtime>
+    <TestingStack>
+      <Tool>eunit or common_test</Tool>
+      <Tool>HTTP integration checks via curl/docker compose</Tool>
+      <Tool>install smoke test on clean VPS path</Tool>
+    </TestingStack>
+    <ObservabilityStack>
+      <Item>Erlang OTP supervisors</Item>
+      <Item>container logs</Item>
+      <Item>structured install output</Item>
+    </ObservabilityStack>
+  </Project>
+
+  <ModuleIndex COUNT="12">
+    <M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" PATH="install.sh" DEPENDS="M-CONFIG,M-CERTS,M-DEPLOY" VERIFICATION_REF="V-M-INSTALL" />
+    <M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" PATH="deploy/.env.example" DEPENDS="" VERIFICATION_REF="V-M-CONFIG" />
+    <M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" PATH="ops/certs/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-CERTS" />
+    <M-DEPLOY NAME="Container Orchestration" TYPE="ENTRY_POINT" STATUS="done" PATH="docker-compose.yml" DEPENDS="M-CONFIG,M-RELEASE" VERIFICATION_REF="V-M-DEPLOY" />
+    <M-WEB-UI NAME="Portal UI" TYPE="UI_COMPONENT" STATUS="done" PATH="apps/kpproton_portal/priv/static/" DEPENDS="M-WEB-API" VERIFICATION_REF="V-M-WEB-UI" />
+    <M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" PATH="apps/kpproton_portal/src/http/" DEPENDS="M-TOKEN,M-EMAIL,M-PROXY-ISSUE,M-REGISTRY" VERIFICATION_REF="V-M-WEB-API" />
+    <M-TOKEN NAME="Verification Token Store" TYPE="DATA_LAYER" STATUS="done" PATH="apps/kpproton_portal/src/token/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-TOKEN" />
+    <M-EMAIL NAME="Resend Adapter" TYPE="INTEGRATION" STATUS="done" PATH="apps/kpproton_portal/src/integrations/resend/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-EMAIL" />
+    <M-REGISTRY NAME="Proxy Registry" TYPE="DATA_LAYER" STATUS="done" PATH="apps/kpproton_proxy/src/registry/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-REGISTRY" />
+    <M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" PATH="apps/kpproton_proxy/src/provisioning/" DEPENDS="M-REGISTRY,M-CONFIG,M-PROXY-BRIDGE" VERIFICATION_REF="V-M-PROXY-ISSUE" />
+    <M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" PATH="apps/kpproton_proxy/src/mtproto/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-PROXY-BRIDGE" />
+    <M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" PATH="Dockerfile" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-RELEASE" />
+  </ModuleIndex>
+
+  <CriticalFlows>
+    <CF-001 NAME="Single-command VPS bootstrap">
+      install.sh collects minimal input, installs Docker stack, provisions certs, writes env, and starts services.
+    </CF-001>
+    <CF-002 NAME="Email magic-link request">
+      User submits email, system creates expiring token and calls Resend API with a verification link.
+    </CF-002>
+    <CF-003 NAME="Verification to proxy issuance">
+      Token validation triggers user persistence in DETS, per-user SNI generation, policy update, and tg://proxy output.
+    </CF-003>
+    <CF-004 NAME="TLS and domain-fronting edge">
+      Wildcard certificates, SNI routing, and HTTPS portal traffic must coexist safely on port 443.
+    </CF-004>
+    <CF-005 NAME="External integration failure handling">
+      Resend auth/network errors and certificate provisioning failures must surface actionable operator and user feedback.
+    </CF-005>
+  </CriticalFlows>
+</MyGRACE-GraphIndex>

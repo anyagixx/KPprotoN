@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" VERSION="1.5.0">
+  <test-files>
+    <file>tests/mtproto/validate_edge_contract.sh</file>
+    <file>tests/mtproto/validate_edge_docs.sh</file>
+    <file>tests/mtproto/validate_bridge_module.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/mtproto/validate_edge_contract.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/mtproto/validate_edge_docs.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/mtproto/validate_bridge_module.sh</check-3>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">New SNI policy becomes effective without breaking existing HTTPS portal traffic on 443.</scenario-1>
+    <scenario-2 kind="failure">Upstream hook mismatch or routing regression is detected before public rollout.</scenario-2>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>443 edge preserves both web and proxy behavior.</invariant-1>
+    <invariant-2>Policy application is observable and reversible on failure.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Mutates runtime policy or routing state inside the proxy engine.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-PROXY-BRIDGE][apply_domain_policy][LOAD_POLICY]</marker-1>
+    <marker-2>[M-PROXY-BRIDGE][apply_domain_policy][APPLY_POLICY]</marker-2>
+    <marker-3>[M-PROXY-BRIDGE][edge_routing][ROUTE_443]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Do not log raw TLS private keys or full secret-bearing policy payloads.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Policy translation and hook selection tests.</module-local>
+    <wave-level>Edge-routing integration in local compose environment.</wave-level>
+    <phase-level>Portal HTTPS and issued proxy domains coexist on live 443.</phase-level>
+  </verification-levels>
+</V-M-PROXY-BRIDGE>

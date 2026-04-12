@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.5.0">
+  <Purpose>Build a single deployable Erlang release and container image containing both proxy and portal capabilities.</Purpose>
+  <Scope>
+    <Item>Compose upstream codebases into one runtime artifact</Item>
+    <Item>Define the Dockerfile and build-time dependencies</Item>
+    <Item>Expose release configuration surfaces used in production</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="Dockerfile" KIND="build-contract">Produces the runtime image for Compose deployment.</Interface>
+    <Interface NAME="release-build" KIND="build-step">Compiles the unified Erlang release.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+  </Dependencies>
+  <Paths>
+    <Source>Dockerfile</Source>
+    <Tests>tests/release/</Tests>
+    <Verification>V-M-RELEASE</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>rebar.config</Artifact>
+    <Artifact>config/sys.config</Artifact>
+    <Artifact>config/vm.args</Artifact>
+    <Artifact>src/kpproton.app.src</Artifact>
+    <Artifact>src/kpproton_app.erl</Artifact>
+    <Artifact>src/kpproton_sup.erl</Artifact>
+    <Artifact>src/kpproton_runtime.erl</Artifact>
+    <Artifact>src/kpproton_web.erl</Artifact>
+    <Artifact>scripts/build_release.sh</Artifact>
+    <Artifact>Dockerfile</Artifact>
+    <Artifact>docker/entrypoint.sh</Artifact>
+    <Artifact>tests/release/validate_dockerfile.sh</Artifact>
+    <Artifact>tests/release/validate_entrypoint.sh</Artifact>
+    <Artifact>tests/release/validate_rebar_project.sh</Artifact>
+    <Artifact>tests/release/validate_release_wrapper.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Combining upstream repositories may introduce release-time dependency conflicts</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-DEPLOY" REL="image-used-by"/>
+  </CrossLinks>
+</M-RELEASE>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-EMAIL NAME="Resend Adapter" TYPE="INTEGRATION" STATUS="done" VERSION="1.5.0">
+  <Purpose>Send verification emails through the Resend API and normalize provider-specific failures.</Purpose>
+  <Scope>
+    <Item>Build email payloads with magic links</Item>
+    <Item>Authenticate using `RESEND_API_KEY`</Item>
+    <Item>Map provider and transport failures into application-level errors</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="send_magic_link" KIND="service-api">Accepts email and verification URL, returns success or typed failure.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/src/integrations/resend/</Source>
+    <Tests>tests/resend/</Tests>
+    <Verification>V-M-EMAIL</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/src/integrations/resend/kpproton_resend_adapter.erl</Artifact>
+    <Artifact>tests/resend/validate_resend_adapter.sh</Artifact>
+    <Artifact>tests/resend/validate_resend_errors.sh</Artifact>
+    <Artifact>tests/resend/validate_resend_operator_evidence.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>401 and 429 responses must be distinguishable for operators</Risk>
+    <Risk>Provider outage should degrade gracefully for users</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-WEB-API" REL="called-by"/>
+  </CrossLinks>
+</M-EMAIL>

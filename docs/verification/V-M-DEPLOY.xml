@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-DEPLOY MODULE="M-DEPLOY" PRIORITY="high" STATUS="done" VERSION="1.3.0">
+  <test-files>
+    <file>tests/deploy/validate_compose_manifest.sh</file>
+    <file>tests/deploy/validate_volume_contract.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">bash tests/deploy/validate_compose_manifest.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/deploy/validate_volume_contract.sh</check-2>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Compose build and run starts services with stable volume mounts for DETS and certificates.</scenario-1>
+    <scenario-2 kind="failure">Port 443 conflicts or invalid mounts fail fast with operator-readable diagnostics.</scenario-2>
+  </scenarios>
+  <critical-invariants>
+    <invariant-1>Persistent volumes are mounted before first write.</invariant-1>
+    <invariant-2>One deployment topology can host both portal and proxy capabilities.</invariant-2>
+  </critical-invariants>
+  <side-effects>
+    <effect-1>Creates and starts containers, networks, and named volumes.</effect-1>
+  </side-effects>
+  <required-log-markers>
+    <marker-1>[M-DEPLOY][compose][VALIDATE_MANIFEST]</marker-1>
+    <marker-2>[M-DEPLOY][compose][BUILD_IMAGE]</marker-2>
+    <marker-3>[M-DEPLOY][compose][START_STACK]</marker-3>
+  </required-log-markers>
+  <redaction-rules>
+    <rule-1>Do not leak env-expanded secrets in compose diagnostics.</rule-1>
+  </redaction-rules>
+  <verification-levels>
+    <module-local>Manifest validation and mount assertions.</module-local>
+    <wave-level>Container startup and restart persistence checks.</wave-level>
+    <phase-level>Live portal plus issuance flow survives compose restart.</phase-level>
+  </verification-levels>
+</V-M-DEPLOY>

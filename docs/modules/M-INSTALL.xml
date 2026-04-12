@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.4.0">
+  <Purpose>Bootstrap a clean Ubuntu VPS into a running KPprotoN deployment through a single `install.sh` entry point.</Purpose>
+  <Scope>
+    <Item>Prompt for `BASE_DOMAIN` and `RESEND_API_KEY` only</Item>
+    <Item>Install Docker Engine and Docker Compose plugin if absent</Item>
+    <Item>Generate proxy secret and `.env` values</Item>
+    <Item>Persist optional REG.RU API credentials from shell env without additional prompts</Item>
+    <Item>Trigger certificate provisioning and container startup</Item>
+    <Item>Print operator-facing status and final portal URL</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="install.sh" KIND="shell-entry">Interactive installer for first-time deployment and reruns.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-CONFIG"/>
+    <DependsOn REF="M-CERTS"/>
+    <DependsOn REF="M-DEPLOY"/>
+  </Dependencies>
+  <Paths>
+    <Source>install.sh</Source>
+    <Tests>tests/install/</Tests>
+    <Verification>V-M-INSTALL</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>install.sh</Artifact>
+    <Artifact>tests/install/validate_install_contract.sh</Artifact>
+    <Artifact>tests/install/validate_install_syntax.sh</Artifact>
+    <Artifact>tests/install/validate_install_readiness.sh</Artifact>
+  </Implementation>
+  <Risks>
+    <Risk>Idempotency across partial installs</Risk>
+    <Risk>Operator confusion around wildcard DNS challenge prerequisites</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-CERTS" REL="provisions-before-start"/>
+    <CrossLink REF="M-DEPLOY" REL="starts-stack"/>
+  </CrossLinks>
+</M-INSTALL>

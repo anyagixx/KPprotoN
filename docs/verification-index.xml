@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-VerificationIndex VERSION="1.0.0">
+  <Project NAME="KPprotoN"/>
+  <VerificationEntries COUNT="12">
+    <V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" />
+    <V-M-CONFIG MODULE="M-CONFIG" PRIORITY="medium" STATUS="done" />
+    <V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" />
+    <V-M-DEPLOY MODULE="M-DEPLOY" PRIORITY="high" STATUS="done" />
+    <V-M-WEB-UI MODULE="M-WEB-UI" PRIORITY="medium" STATUS="done" />
+    <V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" />
+    <V-M-TOKEN MODULE="M-TOKEN" PRIORITY="high" STATUS="done" />
+    <V-M-EMAIL MODULE="M-EMAIL" PRIORITY="high" STATUS="done" />
+    <V-M-REGISTRY MODULE="M-REGISTRY" PRIORITY="high" STATUS="done" />
+    <V-M-PROXY-ISSUE MODULE="M-PROXY-ISSUE" PRIORITY="high" STATUS="done" />
+    <V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" />
+    <V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" />
+  </VerificationEntries>
+  <Notes>
+    Verification entries track module-level test surfaces, failure cases, and evidence expectations.
+  </Notes>
+</MyGRACE-VerificationIndex>

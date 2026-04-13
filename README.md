@@ -71,6 +71,11 @@ The installer validates the pair and stages it into:
 /etc/letsencrypt/live/<BASE_DOMAIN>/
 ```
 
+Important:
+- a self-signed certificate is acceptable only for basic web-panel smoke tests
+- Telegram fake-TLS proxy links are expected to require a publicly trusted certificate chain
+- for real proxy operation, use a publicly trusted wildcard certificate covering both `BASE_DOMAIN` and `*.BASE_DOMAIN`
+
 ## Reusing certificates between VPS hosts
 
 To avoid unnecessary Let’s Encrypt reissuance for repeated test deployments:

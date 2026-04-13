@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: install.sh
-# VERSION: 1.2.0
+# VERSION: 1.3.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Bootstrap a clean Ubuntu host into a runnable KPprotoN deployment with minimal operator input.
 #   SCOPE: Collect domain and Resend API key, install Docker tooling, generate shared env, prepare storage, either provision or import certificates, and start compose.
@@ -23,7 +23,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.3.0 - Removed REG.RU automation from installer flow and made wildcard issuance always use guided manual DNS-01.
+#   LAST_CHANGE: v1.4.0 - Warn on self-signed certificate imports because Telegram fake-TLS proxies require a publicly trusted certificate chain.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -173,6 +173,7 @@ import_existing_certificates() {
   local fullchain_path="$2"
   local privkey_path="$3"
   local live_dir="/etc/letsencrypt/live/${base_domain}"
+  local cert_subject cert_issuer
 
   [[ -f "${fullchain_path}" ]] || fail "fullchain certificate file not found: ${fullchain_path}"
   [[ -f "${privkey_path}" ]] || fail "private key file not found: ${privkey_path}"
@@ -184,6 +185,14 @@ import_existing_certificates() {
 
   if ! openssl x509 -in "${fullchain_path}" -noout -text | grep -Eq "DNS:${base_domain}|DNS:\\*\\.${base_domain}"; then
     fail "certificate does not contain ${base_domain} or *.${base_domain} in SAN"
+  fi
+
+  cert_subject="$(openssl x509 -in "${fullchain_path}" -noout -subject | sed 's/^subject=//')"
+  cert_issuer="$(openssl x509 -in "${fullchain_path}" -noout -issuer | sed 's/^issuer=//')"
+  if [[ "${cert_subject}" == "${cert_issuer}" ]]; then
+    log_line "CERTS_BOOTSTRAP" "WARNING: imported certificate looks self-signed"
+    log_line "CERTS_BOOTSTRAP" "self-signed certificates can expose the web panel but Telegram fake-TLS proxy checks may still report Not Available"
+    log_line "CERTS_BOOTSTRAP" "use a publicly trusted wildcard certificate for real MTProto proxy operation"
   fi
 
   log_line "CERTS_BOOTSTRAP" "importing existing certificate pair into ${live_dir}"

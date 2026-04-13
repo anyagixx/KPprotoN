@@ -32,6 +32,11 @@ KPprotoN uses a guided manual DNS-01 flow for wildcard certificate issuance.
 4. The installer validates the certificate/key pair and copies them into `/etc/letsencrypt/live/<BASE_DOMAIN>/`.
 5. The Docker runtime then uses the imported files through the same `/certs/live/<BASE_DOMAIN>/...` mount contract.
 
+Important:
+- a self-signed certificate is suitable only for web-panel smoke testing
+- Telegram fake-TLS proxy checks may still reject self-signed certificates as `Not Available`
+- for real proxy usage, import a publicly trusted wildcard certificate for `<BASE_DOMAIN>` and `*.<BASE_DOMAIN>`
+
 ## Exporting and Importing Between VPS Hosts
 To avoid hitting Let’s Encrypt issuance limits for repeated test deployments, you can move an already issued certificate pair between VPS hosts.
 

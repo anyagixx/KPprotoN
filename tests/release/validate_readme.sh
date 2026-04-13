@@ -22,6 +22,8 @@ require_pattern 'issue-new'
 require_pattern 'use-existing'
 require_pattern 'export-existing-cert\.sh'
 require_pattern 'import-existing-cert\.sh'
+require_pattern 'self-signed certificate'
+require_pattern 'publicly trusted wildcard certificate'
 require_pattern 'docker compose logs --tail=200'
 
 echo "[M-DOCS-README][readme][VERIFY] ok"

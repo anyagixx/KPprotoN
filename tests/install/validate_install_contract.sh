@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.2.0 - Removed REG.RU automation expectations and kept manual wildcard issuance plus existing certificate import.
+#   LAST_CHANGE: v1.3.0 - Require operator warning for self-signed certificate imports.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -42,6 +42,7 @@ require_pattern 'run_cert_bootstrap'
 require_pattern 'import_existing_certificates'
 require_pattern 'EXISTING_CERT_FULLCHAIN_PATH'
 require_pattern 'EXISTING_CERT_PRIVKEY_PATH'
+require_pattern 'WARNING: imported certificate looks self-signed'
 require_pattern 'docker compose --env-file'
 
 echo "[M-INSTALL][run][VALIDATE_INPUT] ok"

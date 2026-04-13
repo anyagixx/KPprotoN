@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # FILE: install.sh
-# VERSION: 1.0.0
+# VERSION: 1.1.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Bootstrap a clean Ubuntu host into a runnable KPprotoN deployment with minimal operator input.
-#   SCOPE: Collect domain and Resend API key, install Docker tooling, generate shared env, prepare storage, invoke cert provisioning, and start compose.
+#   SCOPE: Collect domain and Resend API key, install Docker tooling, generate shared env, prepare storage, either provision or import certificates, and start compose.
 #   DEPENDS: deploy/.env.example, ops/certs/provision-certs.sh, docker-compose.yml
 #   LINKS: M-INSTALL, M-CONFIG, M-CERTS, M-DEPLOY
 # END_MODULE_CONTRACT
@@ -15,14 +15,16 @@
 #   prompt_value - collects non-empty user input
 #   install_docker_stack - installs Docker Engine and Compose plugin when absent
 #   generate_proxy_secret - returns a 32-char hex secret
+#   prompt_choice - collects a validated install mode choice
 #   persist_reg_ru_credentials - stores optional REG.RU API credentials for automated DNS-01 runs
 #   write_env_file - materializes .env from deploy/.env.example
 #   run_cert_bootstrap - invokes wildcard-aware TLS provisioning
+#   import_existing_certificates - copies a ready certificate pair into the runtime TLS layout
 #   run_compose_up - starts the stack through Docker Compose
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Added optional REG.RU credential persistence for automated DNS-01 wildcard issuance without extra prompts.
+#   LAST_CHANGE: v1.2.0 - Added dual TLS install modes: issue a new wildcard certificate or import an existing certificate pair.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -66,6 +68,23 @@ prompt_value() {
     value="$(printf '%s' "${value}" | xargs)"
   done
   printf '%s' "${value}"
+}
+
+prompt_choice() {
+  local prompt="$1"
+  shift
+  local allowed=("$@")
+  local value=""
+  while true; do
+    read -r -p "${prompt} [${allowed[*]}]: " value
+    value="$(printf '%s' "${value}" | xargs)"
+    for option in "${allowed[@]}"; do
+      if [[ "${value}" == "${option}" ]]; then
+        printf '%s' "${value}"
+        return 0
+      fi
+    done
+  done
 }
 
 generate_proxy_secret() {
@@ -169,6 +188,31 @@ run_cert_bootstrap() {
   REGRU_CREDENTIALS_FILE="${REGRU_CREDENTIALS_FILE}" "${CERT_SCRIPT}" "${base_domain}" "${ROOT_DIR}/.env"
 }
 
+import_existing_certificates() {
+  local base_domain="$1"
+  local fullchain_path="$2"
+  local privkey_path="$3"
+  local live_dir="/etc/letsencrypt/live/${base_domain}"
+
+  [[ -f "${fullchain_path}" ]] || fail "fullchain certificate file not found: ${fullchain_path}"
+  [[ -f "${privkey_path}" ]] || fail "private key file not found: ${privkey_path}"
+  [[ -r "${fullchain_path}" ]] || fail "fullchain certificate file is not readable: ${fullchain_path}"
+  [[ -r "${privkey_path}" ]] || fail "private key file is not readable: ${privkey_path}"
+
+  openssl x509 -in "${fullchain_path}" -noout >/dev/null 2>&1 || fail "invalid X.509 certificate: ${fullchain_path}"
+  openssl pkey -in "${privkey_path}" -noout >/dev/null 2>&1 || fail "invalid private key: ${privkey_path}"
+
+  if ! openssl x509 -in "${fullchain_path}" -noout -text | grep -Eq "DNS:${base_domain}|DNS:\\*\\.${base_domain}"; then
+    fail "certificate does not contain ${base_domain} or *.${base_domain} in SAN"
+  fi
+
+  log_line "CERTS_BOOTSTRAP" "importing existing certificate pair into ${live_dir}"
+  run_privileged install -d -m 755 "${live_dir}"
+  run_privileged install -m 644 "${fullchain_path}" "${live_dir}/fullchain.pem"
+  run_privileged install -m 600 "${privkey_path}" "${live_dir}/privkey.pem"
+  log_line "CERTS_BOOTSTRAP" "existing certificate material staged for runtime bind mount"
+}
+
 run_compose_up() {
   log_line "COMPOSE_UP" "starting docker compose build and launch"
   docker compose --env-file "${ENV_FILE}" up -d --build
@@ -181,6 +225,9 @@ command -v python3 >/dev/null 2>&1 || fail "python3 is required"
 
 base_domain="${BASE_DOMAIN:-}"
 resend_api_key="${RESEND_API_KEY:-}"
+tls_mode="${TLS_MODE:-}"
+existing_fullchain_path="${EXISTING_CERT_FULLCHAIN_PATH:-}"
+existing_privkey_path="${EXISTING_CERT_PRIVKEY_PATH:-}"
 
 if [[ -z "${base_domain}" ]]; then
   base_domain="$(prompt_value 'BASE_DOMAIN')"
@@ -188,10 +235,22 @@ fi
 if [[ -z "${resend_api_key}" ]]; then
   resend_api_key="$(prompt_value 'RESEND_API_KEY')"
 fi
+if [[ -z "${tls_mode}" ]]; then
+  tls_mode="$(prompt_choice 'TLS_MODE' 'issue-new' 'use-existing')"
+fi
+if [[ "${tls_mode}" == "use-existing" ]]; then
+  if [[ -z "${existing_fullchain_path}" ]]; then
+    existing_fullchain_path="$(prompt_value 'EXISTING_CERT_FULLCHAIN_PATH')"
+  fi
+  if [[ -z "${existing_privkey_path}" ]]; then
+    existing_privkey_path="$(prompt_value 'EXISTING_CERT_PRIVKEY_PATH')"
+  fi
+fi
 
 [[ "${base_domain}" =~ ^[A-Za-z0-9.-]+$ ]] || fail "BASE_DOMAIN contains invalid characters"
 [[ "${resend_api_key}" =~ ^re_ ]] || fail "RESEND_API_KEY must look like a Resend key"
-log_line "VALIDATE_INPUT" "operator inputs accepted for ${base_domain}"
+[[ "${tls_mode}" == "issue-new" || "${tls_mode}" == "use-existing" ]] || fail "TLS_MODE must be issue-new or use-existing"
+log_line "VALIDATE_INPUT" "operator inputs accepted for ${base_domain} with TLS mode ${tls_mode}"
 # END_BLOCK_VALIDATE_INPUT
 
 # START_BLOCK_PREPARE_ENV
@@ -204,7 +263,11 @@ log_line "VALIDATE_INPUT" "generated local .env configuration"
 # END_BLOCK_PREPARE_ENV
 
 # START_BLOCK_CERTS_BOOTSTRAP
-run_cert_bootstrap "${base_domain}"
+if [[ "${tls_mode}" == "issue-new" ]]; then
+  run_cert_bootstrap "${base_domain}"
+else
+  import_existing_certificates "${base_domain}" "${existing_fullchain_path}" "${existing_privkey_path}"
+fi
 # END_BLOCK_CERTS_BOOTSTRAP
 
 # START_BLOCK_COMPOSE_UP

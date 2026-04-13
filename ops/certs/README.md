@@ -26,3 +26,14 @@ REG.RU DNS-01 automation is the preferred wildcard strategy for KPprotoN when AP
 - Container target: `/certs`
 - Runtime cert path: `/certs/live/<BASE_DOMAIN>/fullchain.pem`
 - Runtime key path: `/certs/live/<BASE_DOMAIN>/privkey.pem`
+
+## Reusing an Existing Certificate
+`install.sh` also supports a reuse path for already issued certificates.
+
+1. Start `install.sh`.
+2. Choose `TLS_MODE=use-existing`.
+3. Provide paths to:
+   - `EXISTING_CERT_FULLCHAIN_PATH`
+   - `EXISTING_CERT_PRIVKEY_PATH`
+4. The installer validates the certificate/key pair and copies them into `/etc/letsencrypt/live/<BASE_DOMAIN>/`.
+5. The Docker runtime then uses the imported files through the same `/certs/live/<BASE_DOMAIN>/...` mount contract.

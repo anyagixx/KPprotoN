@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.0.0 - Added deterministic install script contract validation.
+#   LAST_CHANGE: v1.1.0 - Added dual TLS mode validation for wildcard issuance and existing certificate import.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -35,10 +35,14 @@ require_pattern() {
 [[ -f "${INSTALL_FILE}" ]] || fail "missing install.sh"
 require_pattern 'prompt_value '\''BASE_DOMAIN'\'''
 require_pattern 'prompt_value '\''RESEND_API_KEY'\'''
+require_pattern 'prompt_choice '\''TLS_MODE'\'''
 require_pattern 'generate_proxy_secret'
 require_pattern 'install_docker_stack'
 require_pattern 'persist_reg_ru_credentials'
 require_pattern 'run_cert_bootstrap'
+require_pattern 'import_existing_certificates'
+require_pattern 'EXISTING_CERT_FULLCHAIN_PATH'
+require_pattern 'EXISTING_CERT_PRIVKEY_PATH'
 require_pattern 'docker compose --env-file'
 
 echo "[M-INSTALL][run][VALIDATE_INPUT] ok"

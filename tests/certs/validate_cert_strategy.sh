@@ -4,7 +4,7 @@
 # VERSION: 1.0.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Validate that certificate provisioning uses an explicit wildcard-safe DNS-01 strategy.
-#   SCOPE: Static checks for manual DNS challenge, wildcard domain request, and mount contract logging.
+#   SCOPE: Static checks for manual DNS challenge, wildcard domain request, export/import helper presence, and mount contract logging.
 #   DEPENDS: ops/certs/provision-certs.sh
 #   LINKS: M-CERTS, V-M-CERTS
 # END_MODULE_CONTRACT
@@ -21,6 +21,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CERT_SCRIPT="${ROOT_DIR}/ops/certs/provision-certs.sh"
+EXPORT_SCRIPT="${ROOT_DIR}/ops/certs/export-existing-cert.sh"
+IMPORT_SCRIPT="${ROOT_DIR}/ops/certs/import-existing-cert.sh"
 
 fail() {
   echo "[M-CERTS][bootstrap][SELECT_CHALLENGE] $*" >&2
@@ -33,6 +35,8 @@ require_pattern() {
 }
 
 [[ -f "${CERT_SCRIPT}" ]] || fail "missing provision-certs.sh"
+[[ -f "${EXPORT_SCRIPT}" ]] || fail "missing export-existing-cert.sh"
+[[ -f "${IMPORT_SCRIPT}" ]] || fail "missing import-existing-cert.sh"
 require_pattern '--preferred-challenges dns'
 require_pattern '--manual'
 require_pattern '--manual-auth-hook'
@@ -42,5 +46,8 @@ require_pattern 'manual_dns_auth.sh'
 require_pattern 'manual_dns_cleanup.sh'
 require_pattern '\*.\$\{BASE_DOMAIN\}'
 require_pattern 'log_line "PERSIST_PATHS"'
+grep -Eq 'fullchain\.pem' "${EXPORT_SCRIPT}" || fail "export helper does not package fullchain.pem"
+grep -Eq 'privkey\.pem' "${EXPORT_SCRIPT}" || fail "export helper does not package privkey.pem"
+grep -Eq '/etc/letsencrypt/live/' "${IMPORT_SCRIPT}" || fail "import helper does not target letsencrypt live path"
 
 echo "[M-CERTS][bootstrap][SELECT_CHALLENGE] ok"

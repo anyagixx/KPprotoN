@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.2.0 - Updated documentation validation for guided manual DNS-01 flow with Enter-to-continue propagation checks.
+#   LAST_CHANGE: v1.3.0 - Updated documentation validation for certificate export/import reuse workflow.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -40,5 +40,8 @@ require_pattern 'press `Enter`'
 require_pattern 'publicly visible via `dig`'
 require_pattern '/certs/live/<BASE_DOMAIN>/fullchain.pem'
 require_pattern '/etc/letsencrypt'
+require_pattern 'export-existing-cert.sh'
+require_pattern 'import-existing-cert.sh'
+require_pattern 'Let’s Encrypt issuance limits'
 
 echo "[M-CERTS][bootstrap][PERSIST_PATHS] ok"

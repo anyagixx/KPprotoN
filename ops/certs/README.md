@@ -37,3 +37,34 @@ REG.RU DNS-01 automation is the preferred wildcard strategy for KPprotoN when AP
    - `EXISTING_CERT_PRIVKEY_PATH`
 4. The installer validates the certificate/key pair and copies them into `/etc/letsencrypt/live/<BASE_DOMAIN>/`.
 5. The Docker runtime then uses the imported files through the same `/certs/live/<BASE_DOMAIN>/...` mount contract.
+
+## Exporting and Importing Between VPS Hosts
+To avoid hitting Let’s Encrypt issuance limits for repeated test deployments, you can move an already issued certificate pair between VPS hosts.
+
+Use the provided helpers:
+- `ops/certs/export-existing-cert.sh`
+- `ops/certs/import-existing-cert.sh`
+
+### Export from the source VPS
+```bash
+sudo ./ops/certs/export-existing-cert.sh <BASE_DOMAIN> /root/<BASE_DOMAIN>-cert-export.tar.gz
+```
+
+This creates an archive containing:
+- `fullchain.pem`
+- `privkey.pem`
+- `manifest.env`
+
+### Import on the target VPS
+```bash
+sudo ./ops/certs/import-existing-cert.sh /root/<BASE_DOMAIN>-cert-export.tar.gz <BASE_DOMAIN>
+```
+
+After that you can run:
+```bash
+bash install.sh
+```
+and choose:
+- `TLS_MODE=use-existing`
+
+or directly point `install.sh` at the same extracted `fullchain.pem` and `privkey.pem`.

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" VERSION="1.5.0">
+<M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" VERSION="1.6.0">
   <Purpose>Acquire and refresh TLS certificates for the base domain and wildcard subdomains used by domain fronting.</Purpose>
   <Scope>
     <Item>Select the certificate acquisition strategy</Item>
@@ -8,6 +8,7 @@
     <Item>Automate REG.RU DNS-01 when provider credentials are available</Item>
     <Item>Guide manual DNS-01 by printing TXT values, waiting for Enter, and checking propagation before continuing</Item>
     <Item>Support imported certificate material through the same runtime mount contract</Item>
+    <Item>Provide export/import helpers for reusing already issued certificate material across VPS hosts</Item>
   </Scope>
   <Interfaces>
     <Interface NAME="cert-bootstrap" KIND="ops-command">Invokes Certbot or equivalent challenge workflow.</Interface>
@@ -25,6 +26,8 @@
     <Artifact>ops/certs/provision-certs.sh</Artifact>
     <Artifact>ops/certs/reg_ru_dns_auth.sh</Artifact>
     <Artifact>ops/certs/reg_ru_dns_cleanup.sh</Artifact>
+    <Artifact>ops/certs/export-existing-cert.sh</Artifact>
+    <Artifact>ops/certs/import-existing-cert.sh</Artifact>
     <Artifact>ops/certs/README.md</Artifact>
     <Artifact>tests/certs/validate_cert_strategy.sh</Artifact>
     <Artifact>tests/certs/validate_cert_docs.sh</Artifact>

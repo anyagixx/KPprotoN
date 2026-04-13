@@ -1,10 +1,10 @@
 -module(kpproton_core_api).
 
 %% FILE: src/kpproton_core_api.erl
-%% VERSION: 1.0.0
+%% VERSION: 1.1.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Fetch Telegram core bootstrap artifacts through the system curl binary for mtproto_proxy startup.
-%%   SCOPE: Retrieve getProxySecret/getProxyConfig payloads and normalize failures for local bootstrap handlers.
+%%   SCOPE: Retrieve getProxySecret/getProxyConfig payloads, filter unreachable downstreams, and normalize failures for local bootstrap handlers.
 %%   DEPENDS: M-CONFIG
 %%   LINKS: M-PROXY-BRIDGE, M-RELEASE
 %% END_MODULE_CONTRACT
@@ -15,7 +15,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.0.0 - Added curl-backed Telegram core bootstrap fetcher for mtproto_proxy startup.
+%%   LAST_CHANGE: v1.1.0 - Filter unreachable bootstrap downstreams before exposing proxy config to mtproto_proxy.
 %% END_CHANGE_SUMMARY
 
 -export([proxy_secret/0, proxy_config/0]).
@@ -25,7 +25,12 @@ proxy_secret() ->
     fetch_url(os:getenv("PROXY_SECRET_URL", "https://core.telegram.org/getProxySecret")).
 
 proxy_config() ->
-    fetch_url(os:getenv("PROXY_CONFIG_URL", "https://core.telegram.org/getProxyConfig")).
+    case fetch_url(os:getenv("PROXY_CONFIG_URL", "https://core.telegram.org/getProxyConfig")) of
+        {ok, Body} ->
+            {ok, filter_proxy_config(Body)};
+        Error ->
+            Error
+    end.
 
 fetch_url(Url) ->
     Port = open_port(
@@ -51,5 +56,75 @@ collect_output(Port, Acc) ->
     after 25000 ->
         port_close(Port),
         {error, timeout}
+    end.
+
+filter_proxy_config(Body) ->
+    TimeoutMs = env_integer("BOOTSTRAP_DOWNSTREAM_CONNECT_TIMEOUT_MS", 1000),
+    Lines = binary:split(Body, <<"\n">>, [global]),
+    Filtered =
+        lists:reverse(
+          lists:foldl(
+            fun(Line, Acc) ->
+                case should_keep_line(Line, TimeoutMs) of
+                    true -> [Line | Acc];
+                    false -> Acc
+                end
+            end,
+            [],
+            Lines
+          )
+        ),
+    iolist_to_binary(lists:join(<<"\n">>, Filtered)).
+
+should_keep_line(<<>>, _TimeoutMs) ->
+    true;
+should_keep_line(<<"proxy_for ", _/binary>> = Line, TimeoutMs) ->
+    case parse_downstream_line(Line) of
+        {ok, DcId, Host, Port} ->
+            case downstream_reachable(Host, Port, TimeoutMs) of
+                true ->
+                    true;
+                false ->
+                    io:format(
+                      "[M-PROXY-BRIDGE][apply_domain_policy][LOAD_POLICY] filtered unreachable downstream dc=~p host=~s port=~p~n",
+                      [DcId, binary_to_list(Host), Port]
+                    ),
+                    false
+            end;
+        error ->
+            true
+    end;
+should_keep_line(_Line, _TimeoutMs) ->
+    true.
+
+parse_downstream_line(Line) ->
+    try
+        [<<"proxy_for">>, DcIdBin, HostPort0] = binary:split(Line, <<" ">>, [global]),
+        HostPort = binary:trim(HostPort0, trailing, <<";">>),
+        [Host, PortBin] = binary:split(HostPort, <<":">>),
+        {ok, binary_to_integer(DcIdBin), Host, binary_to_integer(PortBin)}
+    catch
+        _:_ ->
+            error
+    end.
+
+downstream_reachable(Host, Port, TimeoutMs) ->
+    case gen_tcp:connect(binary_to_list(Host), Port, [binary, {packet, raw}, {active, false}], TimeoutMs) of
+        {ok, Socket} ->
+            ok = gen_tcp:close(Socket),
+            true;
+        {error, _Reason} ->
+            false
+    end.
+
+env_integer(Key, Default) ->
+    case os:getenv(Key) of
+        false ->
+            Default;
+        Value ->
+            case string:to_integer(Value) of
+                {Int, _} -> Int;
+                _ -> Default
+            end
     end.
 %% END_BLOCK_FETCH_CORE_API

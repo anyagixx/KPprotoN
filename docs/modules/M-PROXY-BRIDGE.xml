@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" VERSION="1.4.0">
+<M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" VERSION="1.5.0">
   <Purpose>Connect the portal-driven issuance flow to the underlying `mtproto_proxy` runtime and edge routing behavior.</Purpose>
   <Scope>
     <Item>Adapt to the upstream proxy engine interfaces</Item>
@@ -22,9 +22,11 @@
     <Artifact>apps/kpproton_proxy/src/mtproto/edge-routing.conf</Artifact>
     <Artifact>apps/kpproton_proxy/src/mtproto/README.md</Artifact>
     <Artifact>apps/kpproton_proxy/src/mtproto/kpproton_proxy_bridge.erl</Artifact>
+    <Artifact>src/kpproton_core_api.erl</Artifact>
     <Artifact>tests/mtproto/validate_edge_contract.sh</Artifact>
     <Artifact>tests/mtproto/validate_edge_docs.sh</Artifact>
     <Artifact>tests/mtproto/validate_bridge_module.sh</Artifact>
+    <Artifact>tests/mtproto/validate_bootstrap_filter.sh</Artifact>
   </Implementation>
   <Risks>
     <Risk>Upstream project internals may not expose a stable policy hook</Risk>

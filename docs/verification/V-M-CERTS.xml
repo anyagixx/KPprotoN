@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.4.0">
+<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.5.0">
   <test-files>
     <file>tests/certs/validate_cert_strategy.sh</file>
     <file>tests/certs/validate_cert_docs.sh</file>
@@ -11,12 +11,13 @@
   <scenarios>
     <scenario-1 kind="success">Apex and wildcard certificates exist at stable mount paths and are readable by the app container.</scenario-1>
     <scenario-1b kind="success">When REG.RU credentials are present, DNS-01 is completed automatically without interactive TXT entry.</scenario-1b>
-    <scenario-2 kind="failure">DNS challenge prerequisites are missing and the installer stops with clear operator instructions.</scenario-2>
+    <scenario-2 kind="failure">DNS challenge prerequisites are missing or TXT propagation is not yet visible, and the installer keeps the operator in the guided wait loop instead of continuing blindly.</scenario-2>
     <scenario-3 kind="failure">Renewal failure is visible before live traffic breaks.</scenario-3>
   </scenarios>
   <critical-invariants>
     <invariant-1>Wildcard certificate flow is explicit and not silently downgraded.</invariant-1>
     <invariant-2>Certificate material persists across container restarts.</invariant-2>
+    <invariant-3>Guided manual DNS-01 does not continue until the requested TXT value is publicly visible.</invariant-3>
   </critical-invariants>
   <side-effects>
     <effect-1>Writes certificate and renewal files to host storage.</effect-1>

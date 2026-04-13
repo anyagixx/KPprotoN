@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # FILE: ops/certs/provision-certs.sh
-# VERSION: 1.0.0
+# VERSION: 1.1.0
 # START_MODULE_CONTRACT
-#   PURPOSE: Provision apex and wildcard TLS certificates for KPprotoN through REG.RU DNS-01 automation with manual fallback.
-#   SCOPE: Install Certbot if missing, read base domain and cert email, detect REG.RU credentials, request certs through DNS hooks or manual DNS-01, and persist mount contract notes.
+#   PURPOSE: Provision apex and wildcard TLS certificates for KPprotoN through REG.RU DNS-01 automation with guided manual fallback.
+#   SCOPE: Install Certbot if missing, read base domain and cert email, detect REG.RU credentials, request certs through DNS hooks or guided manual DNS-01, and persist mount contract notes.
 #   DEPENDS: .env
 #   LINKS: M-CERTS, M-INSTALL, V-M-CERTS
 # END_MODULE_CONTRACT
@@ -14,11 +14,11 @@
 #   require_base_domain - loads BASE_DOMAIN from args or env file
 #   install_certbot - installs Certbot on Ubuntu when absent
 #   request_reg_ru_dns_cert - runs Certbot with REG.RU DNS-01 hook automation
-#   request_manual_dns_cert - runs Certbot with explicit manual DNS challenge flow
+#   request_manual_dns_cert - runs Certbot with guided manual DNS challenge flow
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Added REG.RU DNS-01 automation path with root-owned credential file fallback.
+#   LAST_CHANGE: v1.2.0 - Added guided manual DNS-01 hooks that wait for operator confirmation and TXT propagation before continuing.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -29,6 +29,8 @@ ENV_FILE="${2:-}"
 REGRU_CREDENTIALS_FILE="${REGRU_CREDENTIALS_FILE:-/etc/kpproton/reg.ru.credentials}"
 AUTH_HOOK="${SCRIPT_DIR}/reg_ru_dns_auth.sh"
 CLEANUP_HOOK="${SCRIPT_DIR}/reg_ru_dns_cleanup.sh"
+MANUAL_AUTH_HOOK="${SCRIPT_DIR}/manual_dns_auth.sh"
+MANUAL_CLEANUP_HOOK="${SCRIPT_DIR}/manual_dns_cleanup.sh"
 CERTBOT_EMAIL=""
 
 log_line() {
@@ -65,13 +67,13 @@ load_certbot_email() {
 }
 
 install_certbot() {
-  if command -v certbot >/dev/null 2>&1; then
-    log_line "SELECT_CHALLENGE" "certbot already installed"
+  if command -v certbot >/dev/null 2>&1 && command -v dig >/dev/null 2>&1; then
+    log_line "SELECT_CHALLENGE" "certbot and dig already installed"
     return 0
   fi
-  log_line "SELECT_CHALLENGE" "installing certbot for manual DNS-01 workflow"
+  log_line "SELECT_CHALLENGE" "installing certbot dependencies for DNS-01 workflow"
   run_privileged apt-get update
-  run_privileged apt-get install -y certbot
+  run_privileged apt-get install -y certbot dnsutils
 }
 
 has_reg_ru_credentials() {
@@ -106,18 +108,25 @@ request_reg_ru_dns_cert() {
 }
 
 request_manual_dns_cert() {
-  log_line "SELECT_CHALLENGE" "using manual DNS-01 because wildcard certificates require DNS validation"
-  log_line "REQUEST_CERT" "create TXT records for _acme-challenge.${BASE_DOMAIN} when certbot prompts"
+  [[ -x "${MANUAL_AUTH_HOOK}" ]] || fail "missing guided manual DNS auth hook"
+  [[ -x "${MANUAL_CLEANUP_HOOK}" ]] || fail "missing guided manual DNS cleanup hook"
+
+  log_line "SELECT_CHALLENGE" "using guided manual DNS-01 because wildcard certificates require DNS validation"
+  log_line "REQUEST_CERT" "installer will print TXT records, wait for Enter, verify propagation, and then continue"
   log_line "PERSIST_PATHS" "expected mount path: /etc/letsencrypt/live/${BASE_DOMAIN}/"
 
   run_privileged certbot certonly \
-    --manual \
-    --preferred-challenges dns \
-    --manual-public-ip-logging-ok \
-    --agree-tos \
-    --email "${CERTBOT_EMAIL}" \
-    -d "${BASE_DOMAIN}" \
-    -d "*.${BASE_DOMAIN}"
+      --manual \
+      --preferred-challenges dns \
+      --manual-auth-hook "${MANUAL_AUTH_HOOK}" \
+      --manual-cleanup-hook "${MANUAL_CLEANUP_HOOK}" \
+      --manual-public-ip-logging-ok \
+      --non-interactive \
+      --agree-tos \
+      --email "${CERTBOT_EMAIL}" \
+      --keep-until-expiring \
+      -d "${BASE_DOMAIN}" \
+      -d "*.${BASE_DOMAIN}"
 }
 
 # START_BLOCK_SELECT_CHALLENGE

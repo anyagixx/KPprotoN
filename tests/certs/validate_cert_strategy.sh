@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Added REG.RU hook validation while preserving wildcard-safe DNS-01 markers.
+#   LAST_CHANGE: v1.2.0 - Added guided manual DNS-01 hook validation alongside REG.RU automation.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -38,6 +38,8 @@ require_pattern '--manual'
 require_pattern '--manual-auth-hook'
 require_pattern 'reg_ru_dns_auth.sh'
 require_pattern 'reg_ru_dns_cleanup.sh'
+require_pattern 'manual_dns_auth.sh'
+require_pattern 'manual_dns_cleanup.sh'
 require_pattern '\*.\$\{BASE_DOMAIN\}'
 require_pattern 'log_line "PERSIST_PATHS"'
 

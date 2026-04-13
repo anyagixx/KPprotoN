@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.5.0">
+<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.6.0">
   <test-files>
     <file>tests/install/validate_install_contract.sh</file>
     <file>tests/install/validate_install_syntax.sh</file>
@@ -13,7 +13,7 @@
   <scenarios>
     <scenario-1 kind="success">Fresh Ubuntu host completes install and prints the final portal URL.</scenario-1>
     <scenario-1b kind="success">Fresh Ubuntu host auto-provisions REG.RU wildcard certificates when provider credentials are pre-exported.</scenario-1b>
-    <scenario-2 kind="failure">Invalid domain, missing sudo, or interrupted package install returns actionable operator guidance.</scenario-2>
+    <scenario-2 kind="failure">Invalid domain, missing sudo, interrupted package install, or incomplete manual DNS propagation returns actionable operator guidance without skipping wildcard issuance.</scenario-2>
     <scenario-3 kind="failure">Rerun after partial install remains idempotent and does not corrupt `.env` or volumes.</scenario-3>
   </scenarios>
   <critical-invariants>
@@ -41,5 +41,6 @@
   <production-gates>
     <gate-1>Installer blocks on missing wildcard DNS-01 prerequisites instead of faking success.</gate-1>
     <gate-2>Final portal URL is emitted only after compose startup is invoked.</gate-2>
+    <gate-3>Guided manual DNS-01 waits for operator confirmation and propagation visibility before compose startup.</gate-3>
   </production-gates>
 </V-M-INSTALL>

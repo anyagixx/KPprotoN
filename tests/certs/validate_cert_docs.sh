@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Updated documentation validation for REG.RU automation plus manual DNS-01 fallback.
+#   LAST_CHANGE: v1.2.0 - Updated documentation validation for guided manual DNS-01 flow with Enter-to-continue propagation checks.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -36,6 +36,8 @@ require_pattern() {
 require_pattern 'REG.RU DNS-01 automation'
 require_pattern 'Manual Fallback'
 require_pattern 'cannot be issued through plain HTTP-01'
+require_pattern 'press `Enter`'
+require_pattern 'publicly visible via `dig`'
 require_pattern '/certs/live/<BASE_DOMAIN>/fullchain.pem'
 require_pattern '/etc/letsencrypt'
 

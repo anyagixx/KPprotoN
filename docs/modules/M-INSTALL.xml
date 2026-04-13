@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.4.0">
+<M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.5.0">
   <Purpose>Bootstrap a clean Ubuntu VPS into a running KPprotoN deployment through a single `install.sh` entry point.</Purpose>
   <Scope>
     <Item>Prompt for `BASE_DOMAIN` and `RESEND_API_KEY` only</Item>
@@ -7,6 +7,7 @@
     <Item>Generate proxy secret and `.env` values</Item>
     <Item>Persist optional REG.RU API credentials from shell env without additional prompts</Item>
     <Item>Trigger certificate provisioning and container startup</Item>
+    <Item>Preserve a guided manual wildcard DNS-01 flow when automation credentials are absent</Item>
     <Item>Print operator-facing status and final portal URL</Item>
   </Scope>
   <Interfaces>

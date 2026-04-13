@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" VERSION="1.3.0">
+<M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" VERSION="1.4.0">
   <Purpose>Acquire and refresh TLS certificates for the base domain and wildcard subdomains used by domain fronting.</Purpose>
   <Scope>
     <Item>Select the certificate acquisition strategy</Item>
     <Item>Handle apex and wildcard certificate provisioning</Item>
     <Item>Persist certificate material for container reuse</Item>
     <Item>Automate REG.RU DNS-01 when provider credentials are available</Item>
+    <Item>Guide manual DNS-01 by printing TXT values, waiting for Enter, and checking propagation before continuing</Item>
   </Scope>
   <Interfaces>
     <Interface NAME="cert-bootstrap" KIND="ops-command">Invokes Certbot or equivalent challenge workflow.</Interface>

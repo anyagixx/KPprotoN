@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.1.0">
+  <Purpose>Render clear, branded, UTF-8-safe email subject and body templates for the magic-link delivery flow.</Purpose>
+  <Scope>
+    <Item>Generate a meaningful subject line that explains proxy access verification</Item>
+    <Item>Generate HTML email with CTA button and readable structure</Item>
+    <Item>Generate plain-text fallback without mojibake or broken copy</Item>
+    <Item>Keep wording aligned with portal and verify UX</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="build_magic_link_email" KIND="template-api">Returns subject, HTML, and text body for a verification email.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-EMAIL"/>
+    <DependsOn REF="M-CONFIG"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/src/integrations/resend/</Source>
+    <Tests>tests/resend/</Tests>
+    <Verification>V-M-EMAIL-TEMPLATE</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/src/integrations/resend/</Artifact>
+    <Artifact>tests/resend/</Artifact>
+  </Implementation>
+  <Evidence>
+    <Check>bash tests/resend/validate_resend_adapter.sh</Check>
+    <Check>bash tests/resend/validate_email_template.sh</Check>
+  </Evidence>
+  <Risks>
+    <Risk>Broken encoding or raw placeholder strings make the email unreadable</Risk>
+    <Risk>Missing text fallback reduces deliverability or usability</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-EMAIL" REL="rendered-by"/>
+    <CrossLink REF="M-VERIFY-UX" REL="copy-and-tone-aligned-with"/>
+  </CrossLinks>
+</M-EMAIL-TEMPLATE>

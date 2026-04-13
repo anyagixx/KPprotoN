@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-DOCS-README MODULE="M-DOCS-README" PRIORITY="medium" STATUS="done" VERSION="1.1.0">
+  <test-files>
+    <file>README.md</file>
+    <file>tests/release/validate_readme.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">README covers project value, one-script deploy flow, TLS modes, and certificate reuse guidance.</check-1>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">A new operator can understand what the project does and how to deploy it from the root README.</scenario-1>
+    <scenario-2 kind="failure">README must not diverge from actual install entrypoint names or TLS flows.</scenario-2>
+  </scenarios>
+  <required-log-markers>
+    <marker-1>README references install.sh and TLS_MODE paths consistently.</marker-1>
+  </required-log-markers>
+  <evidence>
+    <item>bash tests/release/validate_readme.sh</item>
+  </evidence>
+</V-M-DOCS-README>

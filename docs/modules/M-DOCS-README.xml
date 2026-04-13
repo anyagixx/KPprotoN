@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-DOCS-README NAME="Project README" TYPE="UTILITY" STATUS="done" VERSION="1.1.0">
+  <Purpose>Document the project value, one-script VPS deployment flow, and operator-facing TLS/runtime guidance in the repository root README.</Purpose>
+  <Scope>
+    <Item>Explain what KPprotoN is and what it solves</Item>
+    <Item>Show one-script deploy flow for a clean VPS</Item>
+    <Item>Document TLS issuance and reuse options</Item>
+    <Item>Document verification flow and operator troubleshooting entry points</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="README.md" KIND="repo-doc">Primary operator-facing documentation entry point.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-INSTALL"/>
+    <DependsOn REF="M-CERTS"/>
+    <DependsOn REF="M-DEPLOY"/>
+  </Dependencies>
+  <Paths>
+    <Source>README.md</Source>
+    <Tests>tests/release/, tests/install/</Tests>
+    <Verification>V-M-DOCS-README</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>README.md</Artifact>
+  </Implementation>
+  <Evidence>
+    <Check>bash tests/release/validate_readme.sh</Check>
+  </Evidence>
+  <Risks>
+    <Risk>README can drift from the actual install flow if not kept aligned with install.sh</Risk>
+    <Risk>Missing deploy guidance makes the project hard to adopt</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-INSTALL" REL="documents"/>
+    <CrossLink REF="M-CERTS" REL="documents"/>
+    <CrossLink REF="M-DEPLOY" REL="documents"/>
+  </CrossLinks>
+</M-DOCS-README>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M-VERIFY-UX NAME="Verify Result UX" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.1.0">
+  <Purpose>Provide a polished result page after verification with copyable proxy values and clear manual MTProto setup guidance.</Purpose>
+  <Scope>
+    <Item>Render a success page with clear “proxy ready” messaging</Item>
+    <Item>Expose copy-to-clipboard actions for tg://proxy and manual fields</Item>
+    <Item>Explain which values belong in Telegram manual MTProto proxy fields</Item>
+    <Item>Remain readable on mobile and desktop</Item>
+  </Scope>
+  <Interfaces>
+    <Interface NAME="verify-result-page" KIND="html-view">Displays final proxy delivery UI for a verified user.</Interface>
+  </Interfaces>
+  <Dependencies>
+    <DependsOn REF="M-WEB-API"/>
+    <DependsOn REF="M-PROXY-ISSUE"/>
+    <DependsOn REF="M-WEB-UI"/>
+  </Dependencies>
+  <Paths>
+    <Source>apps/kpproton_portal/</Source>
+    <Tests>tests/http/, tests/ui/</Tests>
+    <Verification>V-M-VERIFY-UX</Verification>
+  </Paths>
+  <Implementation>
+    <Artifact>apps/kpproton_portal/src/http/</Artifact>
+    <Artifact>apps/kpproton_portal/priv/static/</Artifact>
+    <Artifact>tests/http/</Artifact>
+    <Artifact>tests/ui/</Artifact>
+  </Implementation>
+  <Evidence>
+    <Check>bash tests/http/validate_verify_contract.sh</Check>
+    <Check>bash tests/http/validate_verify_ux.sh</Check>
+  </Evidence>
+  <Risks>
+    <Risk>Poor copy UX leaves users unable to add the proxy successfully</Risk>
+    <Risk>Missing manual MTProto instructions increases support burden</Risk>
+  </Risks>
+  <CrossLinks>
+    <CrossLink REF="M-WEB-API" REL="rendered-through"/>
+    <CrossLink REF="M-WEB-UI" REL="styled-with"/>
+  </CrossLinks>
+</M-VERIFY-UX>

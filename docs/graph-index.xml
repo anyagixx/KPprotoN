@@ -39,7 +39,7 @@
     </ObservabilityStack>
   </Project>
 
-  <ModuleIndex COUNT="12">
+  <ModuleIndex COUNT="15">
     <M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" PATH="install.sh" DEPENDS="M-CONFIG,M-CERTS,M-DEPLOY" VERIFICATION_REF="V-M-INSTALL" />
     <M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" PATH="deploy/.env.example" DEPENDS="" VERIFICATION_REF="V-M-CONFIG" />
     <M-CERTS NAME="TLS Provisioning" TYPE="INTEGRATION" STATUS="done" PATH="ops/certs/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-CERTS" />
@@ -48,10 +48,13 @@
     <M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" PATH="apps/kpproton_portal/src/http/" DEPENDS="M-TOKEN,M-EMAIL,M-PROXY-ISSUE,M-REGISTRY" VERIFICATION_REF="V-M-WEB-API" />
     <M-TOKEN NAME="Verification Token Store" TYPE="DATA_LAYER" STATUS="done" PATH="apps/kpproton_portal/src/token/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-TOKEN" />
     <M-EMAIL NAME="Resend Adapter" TYPE="INTEGRATION" STATUS="done" PATH="apps/kpproton_portal/src/integrations/resend/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-EMAIL" />
+    <M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" PATH="apps/kpproton_portal/src/integrations/resend/" DEPENDS="M-EMAIL,M-CONFIG" VERIFICATION_REF="V-M-EMAIL-TEMPLATE" />
     <M-REGISTRY NAME="Proxy Registry" TYPE="DATA_LAYER" STATUS="done" PATH="apps/kpproton_proxy/src/registry/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-REGISTRY" />
     <M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" PATH="apps/kpproton_proxy/src/provisioning/" DEPENDS="M-REGISTRY,M-CONFIG,M-PROXY-BRIDGE" VERIFICATION_REF="V-M-PROXY-ISSUE" />
     <M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" PATH="apps/kpproton_proxy/src/mtproto/" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-PROXY-BRIDGE" />
     <M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" PATH="Dockerfile" DEPENDS="M-CONFIG" VERIFICATION_REF="V-M-RELEASE" />
+    <M-VERIFY-UX NAME="Verify Result UX" TYPE="UI_COMPONENT" STATUS="done" PATH="apps/kpproton_portal/" DEPENDS="M-WEB-API,M-PROXY-ISSUE,M-WEB-UI" VERIFICATION_REF="V-M-VERIFY-UX" />
+    <M-DOCS-README NAME="Project README" TYPE="UTILITY" STATUS="done" PATH="README.md" DEPENDS="M-INSTALL,M-CERTS,M-DEPLOY" VERIFICATION_REF="V-M-DOCS-README" />
   </ModuleIndex>
 
   <CriticalFlows>

@@ -1,10 +1,10 @@
 -module(kpproton_resend_adapter).
 
 %% FILE: apps/kpproton_portal/src/integrations/resend/kpproton_resend_adapter.erl
-%% VERSION: 1.0.0
+%% VERSION: 1.1.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Define the Resend API adapter contract for magic-link email delivery.
-%%   SCOPE: Build request payloads, map provider status codes to typed failures, and expose a send_magic_link/4 entry point.
+%%   SCOPE: Build branded request payloads, map provider status codes to typed failures, and expose a send_magic_link/4 entry point.
 %%   DEPENDS: M-CONFIG
 %%   LINKS: M-EMAIL, M-WEB-API
 %% END_MODULE_CONTRACT
@@ -16,7 +16,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.0.0 - Added foundational Resend adapter contract and error normalization rules.
+%%   LAST_CHANGE: v1.1.0 - Added template-driven subject, HTML, and text email generation for the magic-link flow.
 %% END_CHANGE_SUMMARY
 
 -export([build_payload/3, map_provider_error/1, send_magic_link/4]).
@@ -24,17 +24,14 @@
 %% START_BLOCK_BUILD_REQUEST
 build_payload(ToEmail, VerifyUrl, FromEmail) ->
     io:format("[M-EMAIL][send_magic_link][BUILD_REQUEST]~n", []),
+    #{subject := Subject, html := Html, text := Text} =
+        kpproton_email_template:build_magic_link_email(kpproton_runtime:base_domain(), VerifyUrl, ToEmail),
     #{
         from => FromEmail,
         to => [ToEmail],
-        subject => <<"Ваш персональный MTProto-прокси">>,
-        html => iolist_to_binary([
-            <<"<p>Подтвердите email и откройте прокси:</p><p><a href=\"">>,
-            VerifyUrl,
-            <<"\">">>,
-            VerifyUrl,
-            <<"</a></p>">>
-        ])
+        subject => Subject,
+        html => Html,
+        text => Text
     }.
 %% END_BLOCK_BUILD_REQUEST
 

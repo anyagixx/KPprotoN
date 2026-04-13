@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-VERIFY-UX MODULE="M-VERIFY-UX" PRIORITY="high" STATUS="done" VERSION="1.1.0">
+  <test-files>
+    <file>tests/http/validate_verify_contract.sh</file>
+    <file>tests/http/validate_verify_ux.sh</file>
+    <file>apps/kpproton_portal/priv/static/verify.js</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">Verify result page includes Telegram CTA, copyable tg://proxy, and manual field explanations.</check-1>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">User can copy tg://proxy link directly from the verify page.</scenario-1>
+    <scenario-2 kind="success">Manual MTProto mode shows server, port, secret, and clear insertion guidance.</scenario-2>
+    <scenario-3 kind="failure">Error pages remain readable and do not expose internals.</scenario-3>
+  </scenarios>
+  <required-log-markers>
+    <marker-1>[M-WEB-API][verify_token][RENDER_RESULT]</marker-1>
+  </required-log-markers>
+  <evidence>
+    <item>bash tests/http/validate_verify_contract.sh</item>
+    <item>bash tests/http/validate_verify_ux.sh</item>
+  </evidence>
+</V-M-VERIFY-UX>

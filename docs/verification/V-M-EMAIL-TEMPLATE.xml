@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<V-M-EMAIL-TEMPLATE MODULE="M-EMAIL-TEMPLATE" PRIORITY="high" STATUS="done" VERSION="1.1.0">
+  <test-files>
+    <file>tests/resend/validate_resend_adapter.sh</file>
+    <file>tests/resend/validate_email_template.sh</file>
+  </test-files>
+  <module-checks>
+    <check-1 evidence="deterministic">Validate subject/body template generation for HTML and text variants.</check-1>
+  </module-checks>
+  <scenarios>
+    <scenario-1 kind="success">Verification email subject clearly explains proxy access confirmation.</scenario-1>
+    <scenario-2 kind="success">HTML email includes CTA button, fallback link, and UTF-8-safe readable text.</scenario-2>
+    <scenario-3 kind="failure">Templates never render mojibake or raw placeholder garbage in Russian copy.</scenario-3>
+  </scenarios>
+  <required-log-markers>
+    <marker-1>[M-EMAIL][send_magic_link][BUILD_REQUEST]</marker-1>
+  </required-log-markers>
+  <evidence>
+    <item>bash tests/resend/validate_resend_adapter.sh</item>
+    <item>bash tests/resend/validate_email_template.sh</item>
+  </evidence>
+</V-M-EMAIL-TEMPLATE>

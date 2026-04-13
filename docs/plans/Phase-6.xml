@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-PhasePlan ID="Phase-6" NAME="Experience and Docs" STATUS="done">
+  <Goal>Improve user-facing delivery surfaces: email template quality, verify result UX, and repository onboarding documentation.</Goal>
+  <Steps COUNT="3">
+    <step-1 status="done" module="M-EMAIL-TEMPLATE,M-EMAIL">
+      Introduce branded UTF-8-safe magic-link email subject, HTML body, and text fallback.
+    </step-1>
+    <step-2 status="done" module="M-VERIFY-UX,M-WEB-API,M-WEB-UI">
+      Build a polished verify result page with copy actions, Telegram CTA, and manual MTProto setup instructions.
+    </step-2>
+    <step-3 status="done" module="M-DOCS-README">
+      Write root README with project overview, one-script VPS deployment, TLS modes, and troubleshooting basics.
+    </step-3>
+  </Steps>
+  <ExitCriteria>
+    <Item>Email verification messages are readable, properly encoded, and visually structured.</Item>
+    <Item>Verify result page supports copy/paste and manual setup without ambiguity.</Item>
+    <Item>README explains one-script deploy flow for a clean VPS.</Item>
+  </ExitCriteria>
+</MyGRACE-PhasePlan>

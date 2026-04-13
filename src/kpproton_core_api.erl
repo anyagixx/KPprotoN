@@ -100,7 +100,13 @@ should_keep_line(_Line, _TimeoutMs) ->
 parse_downstream_line(Line) ->
     try
         [<<"proxy_for">>, DcIdBin, HostPort0] = binary:split(Line, <<" ">>, [global]),
-        HostPort = binary:trim(HostPort0, trailing, <<";">>),
+        HostPort =
+            case binary:last(HostPort0) of
+                $; ->
+                    binary:part(HostPort0, 0, byte_size(HostPort0) - 1);
+                _ ->
+                    HostPort0
+            end,
         [Host, PortBin] = binary:split(HostPort, <<":">>),
         {ok, binary_to_integer(DcIdBin), Host, binary_to_integer(PortBin)}
     catch

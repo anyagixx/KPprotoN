@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.0.0 - Added deterministic volume contract validation.
+#   LAST_CHANGE: v1.1.0 - Updated volume contract validation to match the runnable release start command.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -37,7 +37,7 @@ require_pattern() {
 require_pattern 'KP_EDGE_MODE: shared-443'
 require_pattern '/var/lib/kpproton'
 require_pattern ':/certs:ro'
-require_pattern 'command: \["foundation-ready"\]'
+require_pattern 'command: \["start"\]'
 # END_BLOCK_VALIDATE_VOLUMES
 
 echo "[M-DEPLOY][compose][START_STACK] ok"

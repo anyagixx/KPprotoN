@@ -33,7 +33,7 @@ services:
       KP_EDGE_MODE: shared-443
       PORTAL_HTTP_INTERNAL_PORT: ${PORTAL_HTTP_INTERNAL_PORT:-8080}
     ports:
-      - "443:443"
+      - "443:${HOST_HTTPS_TARGET_PORT:-443}"
       - "${PORTAL_HTTP_INTERNAL_PORT:-8080}:8080"
     volumes:
       - ${DATA_HOST_DIR:-./volumes/data}:/var/lib/kpproton

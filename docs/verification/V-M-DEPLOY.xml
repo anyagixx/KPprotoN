@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-DEPLOY MODULE="M-DEPLOY" PRIORITY="high" STATUS="done" VERSION="1.3.0">
+<V-M-DEPLOY MODULE="M-DEPLOY" PRIORITY="high" STATUS="done" VERSION="1.4.0">
   <test-files>
     <file>tests/deploy/validate_compose_manifest.sh</file>
     <file>tests/deploy/validate_volume_contract.sh</file>
@@ -11,6 +11,7 @@
   <scenarios>
     <scenario-1 kind="success">Compose build and run starts services with stable volume mounts for DETS and certificates.</scenario-1>
     <scenario-2 kind="failure">Port 443 conflicts or invalid mounts fail fast with operator-readable diagnostics.</scenario-2>
+    <scenario-3 kind="success">Compose can route host 443 to a configurable internal HTTPS target for smoke deployments when the shared edge listener is unavailable.</scenario-3>
   </scenarios>
   <critical-invariants>
     <invariant-1>Persistent volumes are mounted before first write.</invariant-1>

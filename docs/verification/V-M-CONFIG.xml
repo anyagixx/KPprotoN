@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-CONFIG MODULE="M-CONFIG" PRIORITY="medium" STATUS="done" VERSION="1.4.0">
+<V-M-CONFIG MODULE="M-CONFIG" PRIORITY="medium" STATUS="done" VERSION="1.5.0">
   <test-files>
     <file>tests/config/validate_env_example.sh</file>
     <file>tests/config/validate_runtime_paths.sh</file>
@@ -12,6 +12,7 @@
     <scenario-1 kind="success">Required env values map cleanly into release and compose configuration.</scenario-1>
     <scenario-2 kind="failure">Missing or malformed env values are rejected before runtime startup.</scenario-2>
     <scenario-3 kind="success">Proxy bootstrap retry and timeout env values are present and render into runtime startup behavior.</scenario-3>
+    <scenario-4 kind="success">Host 443 target port can be overridden without changing the compose manifest.</scenario-4>
   </scenarios>
   <critical-invariants>
     <invariant-1>One canonical source defines domain, ports, secret, and storage paths.</invariant-1>

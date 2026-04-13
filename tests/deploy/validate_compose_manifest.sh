@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.0.0 - Added deterministic compose manifest validation.
+#   LAST_CHANGE: v1.1.0 - Parameterized host 443 target port so deployments can route HTTPS directly to Cowboy TLS when shared edge is unavailable.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -38,8 +38,8 @@ require_pattern '^services:$'
 require_pattern '^  app:$'
 require_pattern '^      target: runtime$'
 require_pattern '^    restart: unless-stopped$'
-require_pattern '^      - deploy/\.env\.example$'
-require_pattern '^      - "443:443"$'
+require_pattern '^      - \.env$'
+require_pattern '^      - "443:\$\{HOST_HTTPS_TARGET_PORT:-443\}"$'
 # END_BLOCK_VALIDATE_MANIFEST
 
 echo "[M-DEPLOY][compose][VALIDATE_MANIFEST] ok"

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-DEPLOY NAME="Container Orchestration" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.2.0">
+<M-DEPLOY NAME="Container Orchestration" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.4.0">
   <Purpose>Build, run, and maintain the Docker Compose deployment topology for KPprotoN.</Purpose>
   <Scope>
     <Item>Define service topology and ports</Item>
     <Item>Mount persistent data and certificate volumes</Item>
     <Item>Support rebuild and restart workflows</Item>
+    <Item>Allow host port 443 to target either the shared edge listener or the direct Cowboy TLS listener through env configuration</Item>
   </Scope>
   <Interfaces>
     <Interface NAME="docker-compose.yml" KIND="deployment-manifest">Primary container orchestration contract.</Interface>

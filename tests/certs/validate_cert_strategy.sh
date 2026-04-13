@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.2.0 - Added guided manual DNS-01 hook validation alongside REG.RU automation.
+#   LAST_CHANGE: v1.3.0 - Removed REG.RU automation expectations and validated the single guided manual DNS-01 strategy.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -40,12 +40,11 @@ require_pattern() {
 require_pattern '--preferred-challenges dns'
 require_pattern '--manual'
 require_pattern '--manual-auth-hook'
-require_pattern 'reg_ru_dns_auth.sh'
-require_pattern 'reg_ru_dns_cleanup.sh'
 require_pattern 'manual_dns_auth.sh'
 require_pattern 'manual_dns_cleanup.sh'
 require_pattern '\*.\$\{BASE_DOMAIN\}'
 require_pattern 'log_line "PERSIST_PATHS"'
+require_pattern 'request_manual_dns_cert'
 grep -Eq 'fullchain\.pem' "${EXPORT_SCRIPT}" || fail "export helper does not package fullchain.pem"
 grep -Eq 'privkey\.pem' "${EXPORT_SCRIPT}" || fail "export helper does not package privkey.pem"
 grep -Eq '/etc/letsencrypt/live/' "${IMPORT_SCRIPT}" || fail "import helper does not target letsencrypt live path"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.7.0">
+<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.8.0">
   <test-files>
     <file>tests/install/validate_install_contract.sh</file>
     <file>tests/install/validate_install_syntax.sh</file>
@@ -12,7 +12,7 @@
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">Fresh Ubuntu host completes install and prints the final portal URL.</scenario-1>
-    <scenario-1b kind="success">Fresh Ubuntu host auto-provisions REG.RU wildcard certificates when provider credentials are pre-exported.</scenario-1b>
+    <scenario-1b kind="success">Fresh Ubuntu host walks through guided manual wildcard DNS-01 and reaches compose startup only after TXT propagation is confirmed.</scenario-1b>
     <scenario-1c kind="success">Fresh Ubuntu host imports an existing `fullchain.pem` and `privkey.pem` pair and reaches compose startup without invoking Certbot.</scenario-1c>
     <scenario-2 kind="failure">Invalid domain, missing sudo, interrupted package install, or incomplete manual DNS propagation returns actionable operator guidance without skipping wildcard issuance.</scenario-2>
     <scenario-3 kind="failure">Rerun after partial install remains idempotent and does not corrupt `.env` or volumes.</scenario-3>

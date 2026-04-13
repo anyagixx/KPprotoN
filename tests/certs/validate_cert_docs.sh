@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.3.0 - Updated documentation validation for certificate export/import reuse workflow.
+#   LAST_CHANGE: v1.4.0 - Updated documentation validation for manual-only DNS-01 issuance and certificate reuse workflow.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -33,8 +33,7 @@ require_pattern() {
 }
 
 [[ -f "${README_FILE}" ]] || fail "missing ops/certs/README.md"
-require_pattern 'REG.RU DNS-01 automation'
-require_pattern 'Manual Fallback'
+require_pattern 'guided manual DNS-01'
 require_pattern 'cannot be issued through plain HTTP-01'
 require_pattern 'press `Enter`'
 require_pattern 'publicly visible via `dig`'

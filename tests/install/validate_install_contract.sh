@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Added dual TLS mode validation for wildcard issuance and existing certificate import.
+#   LAST_CHANGE: v1.2.0 - Removed REG.RU automation expectations and kept manual wildcard issuance plus existing certificate import.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -38,7 +38,6 @@ require_pattern 'prompt_value '\''RESEND_API_KEY'\'''
 require_pattern 'prompt_choice '\''TLS_MODE'\'''
 require_pattern 'generate_proxy_secret'
 require_pattern 'install_docker_stack'
-require_pattern 'persist_reg_ru_credentials'
 require_pattern 'run_cert_bootstrap'
 require_pattern 'import_existing_certificates'
 require_pattern 'EXISTING_CERT_FULLCHAIN_PATH'

@@ -18,7 +18,6 @@ fail() {
 grep -Eq 'run_cert_bootstrap' "${INSTALL_FILE}" || fail "installer does not invoke certificate bootstrap"
 grep -Eq 'import_existing_certificates' "${INSTALL_FILE}" || fail "installer does not support existing certificate import"
 grep -Eq 'TLS_MODE' "${INSTALL_FILE}" || fail "installer does not branch by TLS mode"
-grep -Eq 'persist_reg_ru_credentials' "${INSTALL_FILE}" || fail "installer does not persist optional REG.RU credentials"
 grep -Eq 'docker compose --env-file' "${INSTALL_FILE}" || fail "installer does not invoke compose with generated env"
 grep -Eq '^BASE_DOMAIN=' "${ENV_FILE}" || fail "env template missing BASE_DOMAIN"
 grep -Eq '443:443' "${COMPOSE_FILE}" || fail "compose contract missing 443 edge"

@@ -48,8 +48,6 @@ TLS_MODE=issue-new
 ```
 
 Then the installer will:
-- use REG.RU DNS-01 automation if credentials are available in shell env
-- otherwise switch to guided manual DNS-01
 - print the TXT record name/value
 - wait for your `Enter`
 - verify TXT propagation with `dig`
@@ -96,17 +94,6 @@ bash install.sh
 ```
 
 and use `TLS_MODE=use-existing`.
-
-## REG.RU automation
-
-If you want automated wildcard issuance, export before running the installer:
-
-```bash
-export REGRU_API_USERNAME='...'
-export REGRU_API_PASSWORD='...'
-```
-
-The installer will use them without asking additional questions.
 
 ## Resend
 
@@ -165,6 +152,6 @@ docker compose --env-file .env up -d --build
 
 - one-command VPS bootstrap
 - wildcard TLS support
-- manual or automated DNS-01
+- guided manual DNS-01
 - copyable proxy delivery UX
 - personal fake-TLS proxy links for Telegram

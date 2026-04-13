@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.7.0">
+<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.8.0">
   <test-files>
     <file>tests/certs/validate_cert_strategy.sh</file>
     <file>tests/certs/validate_cert_docs.sh</file>
@@ -10,7 +10,7 @@
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">Apex and wildcard certificates exist at stable mount paths and are readable by the app container.</scenario-1>
-    <scenario-1b kind="success">When REG.RU credentials are present, DNS-01 is completed automatically without interactive TXT entry.</scenario-1b>
+    <scenario-1b kind="success">Guided manual DNS-01 prints TXT details, blocks on Enter, verifies propagation with `dig`, and only then continues issuance.</scenario-1b>
     <scenario-1c kind="success">An imported certificate pair is staged into the same stable mount paths and remains readable by the app container.</scenario-1c>
     <scenario-1d kind="success">An already issued certificate pair can be exported from one VPS and imported on another without invoking a new Let’s Encrypt issuance flow.</scenario-1d>
     <scenario-2 kind="failure">DNS challenge prerequisites are missing or TXT propagation is not yet visible, and the installer keeps the operator in the guided wait loop instead of continuing blindly.</scenario-2>

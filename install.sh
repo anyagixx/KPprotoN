@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: install.sh
-# VERSION: 1.1.0
+# VERSION: 1.2.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Bootstrap a clean Ubuntu host into a runnable KPprotoN deployment with minimal operator input.
 #   SCOPE: Collect domain and Resend API key, install Docker tooling, generate shared env, prepare storage, either provision or import certificates, and start compose.
@@ -16,7 +16,6 @@
 #   install_docker_stack - installs Docker Engine and Compose plugin when absent
 #   generate_proxy_secret - returns a 32-char hex secret
 #   prompt_choice - collects a validated install mode choice
-#   persist_reg_ru_credentials - stores optional REG.RU API credentials for automated DNS-01 runs
 #   write_env_file - materializes .env from deploy/.env.example
 #   run_cert_bootstrap - invokes wildcard-aware TLS provisioning
 #   import_existing_certificates - copies a ready certificate pair into the runtime TLS layout
@@ -24,7 +23,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.2.0 - Added dual TLS install modes: issue a new wildcard certificate or import an existing certificate pair.
+#   LAST_CHANGE: v1.3.0 - Removed REG.RU automation from installer flow and made wildcard issuance always use guided manual DNS-01.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -33,7 +32,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_TEMPLATE="${ROOT_DIR}/deploy/.env.example"
 ENV_FILE="${ROOT_DIR}/.env"
 CERT_SCRIPT="${ROOT_DIR}/ops/certs/provision-certs.sh"
-REGRU_CREDENTIALS_FILE="/etc/kpproton/reg.ru.credentials"
 
 log_line() {
   local block="$1"
@@ -93,24 +91,6 @@ generate_proxy_secret() {
 
 ensure_workspace_dirs() {
   mkdir -p "${ROOT_DIR}/volumes/data" "${ROOT_DIR}/volumes/certs" "${ROOT_DIR}/ops/certs"
-}
-
-persist_reg_ru_credentials() {
-  local username="${REGRU_API_USERNAME:-}"
-  local password="${REGRU_API_PASSWORD:-}"
-
-  if [[ -z "${username}" || -z "${password}" ]]; then
-    log_line "CERTS_BOOTSTRAP" "REG.RU API credentials not provided, installer will use manual DNS-01 fallback"
-    return 0
-  fi
-
-  log_line "CERTS_BOOTSTRAP" "persisting REG.RU API credentials for automated DNS-01"
-  run_privileged install -d -m 700 /etc/kpproton
-  run_privileged tee "${REGRU_CREDENTIALS_FILE}" >/dev/null <<EOF
-REGRU_API_USERNAME=${username}
-REGRU_API_PASSWORD=${password}
-EOF
-  run_privileged chmod 600 "${REGRU_CREDENTIALS_FILE}"
 }
 
 install_docker_stack() {
@@ -183,9 +163,9 @@ PY
 
 run_cert_bootstrap() {
   local base_domain="$1"
-  [[ -x "${CERT_SCRIPT}" ]] || fail "certificate bootstrap script is missing or not executable"
-  log_line "CERTS_BOOTSTRAP" "starting wildcard-aware certificate provisioning flow"
-  REGRU_CREDENTIALS_FILE="${REGRU_CREDENTIALS_FILE}" "${CERT_SCRIPT}" "${base_domain}" "${ROOT_DIR}/.env"
+  [[ -f "${CERT_SCRIPT}" ]] || fail "certificate bootstrap script is missing"
+  log_line "CERTS_BOOTSTRAP" "starting guided manual wildcard DNS-01 certificate provisioning flow"
+  bash "${CERT_SCRIPT}" "${base_domain}" "${ROOT_DIR}/.env"
 }
 
 import_existing_certificates() {
@@ -257,7 +237,6 @@ log_line "VALIDATE_INPUT" "operator inputs accepted for ${base_domain} with TLS 
 ensure_workspace_dirs
 install_docker_stack
 proxy_secret_hex="$(generate_proxy_secret)"
-persist_reg_ru_credentials
 write_env_file "${base_domain}" "${resend_api_key}" "${proxy_secret_hex}"
 log_line "VALIDATE_INPUT" "generated local .env configuration"
 # END_BLOCK_PREPARE_ENV

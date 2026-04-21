@@ -15,6 +15,7 @@ require_pattern() {
 }
 
 [[ -f "${FILE}" ]] || fail "missing verify handler"
+require_pattern '^%% coding: utf-8$'
 require_pattern '-export\(\[init/2, render_verify_result/1\]\)'
 require_pattern '\[M-WEB-API\]\[verify_token\]\[CONSUME_TOKEN\]'
 require_pattern '\[M-WEB-API\]\[verify_token\]\[RENDER_RESULT\]'

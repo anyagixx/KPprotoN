@@ -15,6 +15,7 @@ require_pattern() {
 }
 
 [[ -f "${FILE}" ]] || fail "missing email template"
+require_pattern '^%% coding: utf-8$'
 require_pattern 'Подтвердите email и получите персональный MTProto-прокси'
 require_pattern 'Получить прокси'
 require_pattern 'Если кнопка не работает'

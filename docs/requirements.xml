@@ -47,6 +47,10 @@
       <Item>Resend authorization or delivery failure</Item>
       <Item>Temporary backend or network failure</Item>
     </FailureCases>
+    <SuccessCriteria>
+      <Item>Portal response and delivery email remain readable UTF-8 text for Russian-speaking users</Item>
+      <Item>Resend payload preserves readable UTF-8 subject, HTML, and text content end-to-end</Item>
+    </SuccessCriteria>
   </UC-002>
 
   <UC-003 NAME="Verify email and issue proxy" PRIORITY="critical">
@@ -69,6 +73,10 @@
       <Item>Replay of an already consumed token</Item>
       <Item>Persistence or proxy policy update failure</Item>
     </FailureCases>
+    <SuccessCriteria>
+      <Item>Issued `tg://proxy` credential is bound to the assigned SNI domain</Item>
+      <Item>Knowing the base secret alone is insufficient to authenticate without the issued derived credential</Item>
+    </SuccessCriteria>
   </UC-003>
 
   <UC-004 NAME="Operate resiliently in production" PRIORITY="high">
@@ -82,6 +90,8 @@
       <Item>443/tcp must serve both web traffic and MTProto domain fronting requirements</Item>
       <Item>Errors from external systems must be visible and actionable</Item>
       <Item>Deployment path must remain reproducible</Item>
+      <Item>User-facing Russian copy must remain readable UTF-8 across email and `/verify` flows</Item>
+      <Item>Knowing base domain, port, and base secret must not be enough to use the proxy without an issued per-SNI credential</Item>
     </Constraints>
   </UC-004>
 </MyGRACE-Requirements>

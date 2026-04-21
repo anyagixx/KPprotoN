@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.7.0">
+<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.8.0">
   <Purpose>Expose Cowboy routes for request intake, token verification, health checks, and HTML responses.</Purpose>
   <Scope>
     <Item>Implement `/api/request` and `/verify?token=...`</Item>
     <Item>Validate inputs and map errors to user-readable responses</Item>
+    <Item>Render `/verify` success and failure pages as readable UTF-8 Russian HTML</Item>
     <Item>Coordinate token, email, registry, and provisioning workflows</Item>
   </Scope>
   <Interfaces>
@@ -33,6 +34,7 @@
   <Risks>
     <Risk>Replay or malformed token handling can leak inconsistent state</Risk>
     <Risk>Backend errors must not expose secrets</Risk>
+    <Risk>Encoding corruption in `/verify` bodies can block successful user onboarding even when issuance succeeds</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-WEB-UI" REL="serves"/>

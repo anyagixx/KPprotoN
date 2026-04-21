@@ -1,8 +1,9 @@
+%% coding: utf-8
 -module(kpproton_request_handler).
 -behaviour(cowboy_handler).
 
 %% FILE: apps/kpproton_portal/src/http/kpproton_request_handler.erl
-%% VERSION: 1.0.0
+%% VERSION: 1.1.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Define the request-side HTTP contract for email intake and health checks.
 %%   SCOPE: Email validation, accepted/error JSON payloads, and placeholder hooks for token and email dispatch.
@@ -17,10 +18,13 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.0.0 - Added foundational request handler contract for email intake.
+%%   LAST_CHANGE: v1.1.0 - Added explicit UTF-8 source encoding so accepted and error payloads keep readable Cyrillic text.
 %% END_CHANGE_SUMMARY
 
 -export([init/2, validate_email/1, handle_request/1, health_response/0]).
+
+u(Text) ->
+    unicode:characters_to_binary(Text).
 
 %% START_BLOCK_VALIDATE_INPUT
 validate_email(Email) when is_binary(Email) ->
@@ -40,13 +44,13 @@ handle_request(Email) ->
             io:format("[M-WEB-API][request_email][DISPATCH_EMAIL]~n", []),
             #{
                 status => accepted,
-                message => <<"Проверьте почту">>,
+                message => u("Проверьте почту"),
                 next_step => <<"Open the magic link from your email">>
             };
         {error, invalid_email} ->
             #{
                 status => error,
-                error => <<"Введите корректный email">>
+                error => u("Введите корректный email")
             }
     end.
 %% END_BLOCK_DISPATCH_EMAIL
@@ -75,18 +79,18 @@ init(Req0, State) ->
                                     {ok, _ProviderResponse} ->
                                         handle_request(Email);
                                     {error, invalid_api_key} ->
-                                        #{status => error, error => <<"Ошибка отправки: проверьте RESEND_API_KEY">>};
+                                        #{status => error, error => u("Ошибка отправки: проверьте RESEND_API_KEY")};
                                     {error, _} ->
-                                        #{status => error, error => <<"Не удалось отправить письмо. Попробуйте позже.">>}
+                                        #{status => error, error => u("Не удалось отправить письмо. Попробуйте позже.")}
                                 end;
                             {error, _} ->
-                                #{status => error, error => <<"Не удалось создать токен подтверждения">>}
+                                #{status => error, error => u("Не удалось создать токен подтверждения")}
                         end;
                     {error, invalid_email} ->
-                        #{status => error, error => <<"Введите корректный email">>}
+                        #{status => error, error => u("Введите корректный email")}
                 end;
             error ->
-                #{status => error, error => <<"Некорректный JSON payload">>}
+                #{status => error, error => u("Некорректный JSON payload")}
         end,
     StatusCode = case maps:get(status, Response) of accepted -> 202; _ -> 400 end,
     Req = cowboy_req:reply(

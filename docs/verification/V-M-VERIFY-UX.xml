@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-VERIFY-UX MODULE="M-VERIFY-UX" PRIORITY="high" STATUS="done" VERSION="1.1.0">
+<V-M-VERIFY-UX MODULE="M-VERIFY-UX" PRIORITY="high" STATUS="done" VERSION="1.4.0">
   <test-files>
     <file>tests/http/validate_verify_contract.sh</file>
     <file>tests/http/validate_verify_ux.sh</file>
     <file>apps/kpproton_portal/priv/static/verify.js</file>
+    <file>tests/release/validate_utf8_runtime_copy.sh</file>
   </test-files>
   <module-checks>
-    <check-1 evidence="deterministic">Verify result page includes Telegram CTA, copyable tg://proxy, and manual field explanations.</check-1>
+    <check-1 evidence="deterministic">bash tests/http/validate_verify_ux.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/http/validate_verify_contract.sh</check-2>
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">User can copy tg://proxy link directly from the verify page.</scenario-1>
     <scenario-2 kind="success">Manual MTProto mode shows server, port, secret, and clear insertion guidance.</scenario-2>
     <scenario-3 kind="failure">Error pages remain readable and do not expose internals.</scenario-3>
+    <scenario-4 kind="failure">Cyrillic instructions, buttons, and failure text never degrade into mojibake.</scenario-4>
   </scenarios>
+  <critical-invariants>
+    <invariant-1>Success and error instructions remain human-readable UTF-8 text on the rendered page.</invariant-1>
+  </critical-invariants>
   <required-log-markers>
     <marker-1>[M-WEB-API][verify_token][RENDER_RESULT]</marker-1>
   </required-log-markers>
   <evidence>
     <item>bash tests/http/validate_verify_contract.sh</item>
     <item>bash tests/http/validate_verify_ux.sh</item>
+    <item>bash tests/release/validate_utf8_runtime_copy.sh</item>
+    <item>`validate_verify_ux.sh` is the current deterministic check for rendered copy affordances and setup guidance.</item>
   </evidence>
+  <production-gates>
+    <gate-1>Manual MTProto guidance and copy labels never degrade into mojibake.</gate-1>
+    <gate-2>Compiled runtime probe for verify-page copy stays green after every release-affecting change.</gate-2>
+  </production-gates>
 </V-M-VERIFY-UX>

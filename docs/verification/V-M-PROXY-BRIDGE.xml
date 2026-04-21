@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" VERSION="1.6.0">
+<V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" VERSION="1.8.0">
   <test-files>
     <file>tests/mtproto/validate_edge_contract.sh</file>
     <file>tests/mtproto/validate_edge_docs.sh</file>
@@ -15,10 +15,12 @@
   <scenarios>
     <scenario-1 kind="success">New SNI policy becomes effective without breaking existing HTTPS portal traffic on 443.</scenario-1>
     <scenario-2 kind="failure">Upstream hook mismatch or routing regression is detected before public rollout.</scenario-2>
+    <scenario-3 kind="failure">Client access using the raw base secret or an unissued SNI is rejected once per-SNI secret enforcement is enabled.</scenario-3>
   </scenarios>
   <critical-invariants>
     <invariant-1>443 edge preserves both web and proxy behavior.</invariant-1>
     <invariant-2>Policy application is observable and reversible on failure.</invariant-2>
+    <invariant-3>Issued-domain whitelist and per-SNI secret enforcement move together so policy allowlisting is cryptographically meaningful.</invariant-3>
   </critical-invariants>
   <side-effects>
     <effect-1>Mutates runtime policy or routing state inside the proxy engine.</effect-1>
@@ -36,4 +38,13 @@
     <wave-level>Edge-routing integration in local compose environment.</wave-level>
     <phase-level>Portal HTTPS and issued proxy domains coexist on live 443.</phase-level>
   </verification-levels>
+  <evidence>
+    <item>`validate_bridge_module.sh` and `validate_edge_contract.sh` prove current policy-hook wiring and shared-443 contract.</item>
+    <item>Upstream `_build/default/lib/mtproto_proxy/test/single_dc_SUITE.erl` documents `per_sni_secrets_on_case` and `per_sni_secrets_wrong_secret_case` as the target hardening behavior.</item>
+    <item>Phase-7 remains only partially safe for autonomous rollout until the repo adds a local deterministic probe for raw-secret rejection against the configured listener.</item>
+  </evidence>
+  <production-gates>
+    <gate-1>Connection using raw `PROXY_SECRET_HEX` fails while connection using an issued derived credential succeeds.</gate-1>
+    <gate-2>Autonomous rollout is unsafe until repo-local verification demonstrates both derived-secret acceptance and raw-secret rejection.</gate-2>
+  </production-gates>
 </V-M-PROXY-BRIDGE>

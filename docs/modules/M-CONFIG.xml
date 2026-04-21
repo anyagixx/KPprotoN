@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" VERSION="1.5.0">
+<M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" VERSION="1.6.0">
   <Purpose>Provide the canonical source of deployment and runtime configuration for all KPprotoN modules.</Purpose>
   <Scope>
     <Item>Normalize environment variables</Item>
     <Item>Define domain, ports, secret, and storage paths</Item>
+    <Item>Define a private per-SNI secret salt used to derive user-specific MTProto credentials</Item>
     <Item>Expose shared configuration for release and container layers</Item>
     <Item>Drive mtproto_proxy bootstrap retry and upstream timeout settings</Item>
     <Item>Define the host 443 publish target used by Docker Compose when HTTPS is exposed directly from Cowboy TLS</Item>
@@ -25,6 +26,7 @@
   </Implementation>
   <Risks>
     <Risk>Configuration drift between shell, Docker Compose, and Erlang runtime</Risk>
+    <Risk>Missing or weak per-SNI salt silently downgrades the intended proxy isolation model</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-DEPLOY" REL="feeds-compose"/>

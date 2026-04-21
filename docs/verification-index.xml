@@ -20,5 +20,6 @@
   </VerificationEntries>
   <Notes>
     Verification entries track module-level test surfaces, failure cases, and evidence expectations.
+    Phase-7 adds UTF-8 readability and per-SNI credential hardening gates for CONFIG, RELEASE, EMAIL, WEB-API, VERIFY-UX, PROXY-ISSUE, and PROXY-BRIDGE.
   </Notes>
 </MyGRACE-VerificationIndex>

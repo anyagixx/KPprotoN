@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-VERIFY-UX NAME="Verify Result UX" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.1.0">
-  <Purpose>Provide a polished result page after verification with copyable proxy values and clear manual MTProto setup guidance.</Purpose>
+<M-VERIFY-UX NAME="Verify Result UX" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.2.0">
+  <Purpose>Provide a polished, readable result page after verification with copyable proxy values and clear manual MTProto setup guidance.</Purpose>
   <Scope>
     <Item>Render a success page with clear “proxy ready” messaging</Item>
     <Item>Expose copy-to-clipboard actions for tg://proxy and manual fields</Item>
     <Item>Explain which values belong in Telegram manual MTProto proxy fields</Item>
-    <Item>Remain readable on mobile and desktop</Item>
+    <Item>Remain readable on mobile and desktop without Cyrillic mojibake in success or failure states</Item>
   </Scope>
   <Interfaces>
     <Interface NAME="verify-result-page" KIND="html-view">Displays final proxy delivery UI for a verified user.</Interface>
@@ -33,6 +33,7 @@
   <Risks>
     <Risk>Poor copy UX leaves users unable to add the proxy successfully</Risk>
     <Risk>Missing manual MTProto instructions increases support burden</Risk>
+    <Risk>Encoding corruption in instructional copy leaves users unable to follow setup steps</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-WEB-API" REL="rendered-through"/>

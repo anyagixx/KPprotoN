@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MyGRACE-PlanIndex VERSION="1.0.0">
   <Project NAME="KPprotoN"/>
-  <PhaseIndex COUNT="6">
+  <PhaseIndex COUNT="7">
     <Phase-1 name="Foundation" status="done" steps="4" />
     <Phase-2 name="Edge and Install Path" status="done" steps="4" />
     <Phase-3 name="Email Request Flow" status="done" steps="4" />
     <Phase-4 name="Verification and Issuance" status="done" steps="4" />
     <Phase-5 name="Hardening and Verification" status="done" steps="4" />
     <Phase-6 name="Experience and Docs" status="done" steps="3" />
+    <Phase-7 name="Encoding and Access Hardening" status="pending" steps="5" />
   </PhaseIndex>
   <Notes>
     Phases are ordered to establish runtime foundations before user-facing issuance flows.

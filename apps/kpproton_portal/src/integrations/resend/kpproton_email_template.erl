@@ -1,7 +1,8 @@
+%% coding: utf-8
 -module(kpproton_email_template).
 
 %% FILE: apps/kpproton_portal/src/integrations/resend/kpproton_email_template.erl
-%% VERSION: 1.0.0
+%% VERSION: 1.1.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Render readable, branded magic-link email content for Resend delivery.
 %%   SCOPE: Generate subject, HTML body, and plain-text fallback for verification emails.
@@ -14,7 +15,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.0.0 - Added branded UTF-8-safe magic-link email template generation.
+%%   LAST_CHANGE: v1.1.0 - Added explicit UTF-8 source encoding so compiled email subject and body keep readable Cyrillic text.
 %% END_CHANGE_SUMMARY
 
 -export([build_magic_link_email/3]).
@@ -32,15 +33,27 @@ build_magic_link_email(BaseDomain, VerifyUrl, ToEmail) ->
         <<"<table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width:620px;background:#fffdf8;border-radius:24px;overflow:hidden;box-shadow:0 18px 50px rgba(27,24,19,.12);\">">>,
         <<"<tr><td style=\"padding:28px 32px;background:linear-gradient(135deg,#c75929,#933915);color:#fff8f0;\">">>,
         <<"<div style=\"font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.88;\">KPprotoN</div>">>,
-        <<"<h1 style=\"margin:12px 0 0;font-size:30px;line-height:1.05;\">Подтвердите email</h1>">>,
-        <<"<p style=\"margin:12px 0 0;font-size:16px;line-height:1.6;color:#ffe9df;\">Это письмо нужно, чтобы выдать вам персональную ссылку на MTProto-прокси для Telegram.</p>">>,
+        <<"<h1 style=\"margin:12px 0 0;font-size:30px;line-height:1.05;\">">>, u("Подтвердите email"), <<"</h1>">>,
+        <<"<p style=\"margin:12px 0 0;font-size:16px;line-height:1.6;color:#ffe9df;\">">>,
+        u("Это письмо нужно, чтобы выдать вам персональную ссылку на MTProto-прокси для Telegram."),
+        <<"</p>">>,
         <<"</td></tr><tr><td style=\"padding:28px 32px;\">">>,
-        <<"<p style=\"margin:0 0 16px;font-size:16px;line-height:1.7;color:#424854;\">Для адреса <strong>">>, ToEmail, <<"</strong> был запрошен доступ к прокси на домене <strong>">>, BaseDomain, <<"</strong>.</p>">>,
-        <<"<p style=\"margin:0 0 24px;font-size:16px;line-height:1.7;color:#424854;\">Нажмите кнопку ниже. После подтверждения откроется страница, где можно сразу скопировать и вставить готовую ссылку в Telegram.</p>">>,
-        <<"<p style=\"margin:0 0 24px;\"><a href=\"">>, VerifyUrl, <<"\" style=\"display:inline-block;padding:15px 22px;border-radius:999px;background:#1d7a49;color:#fff;text-decoration:none;font-weight:700;\">Получить прокси</a></p>">>,
-        <<"<p style=\"margin:0 0 12px;font-size:14px;line-height:1.7;color:#5d6470;\">Если кнопка не работает, откройте эту ссылку вручную:</p>">>,
+        <<"<p style=\"margin:0 0 16px;font-size:16px;line-height:1.7;color:#424854;\">">>,
+        u("Для адреса <strong>"), ToEmail, u("</strong> был запрошен доступ к прокси на домене <strong>"), BaseDomain, u("</strong>."),
+        <<"</p>">>,
+        <<"<p style=\"margin:0 0 24px;font-size:16px;line-height:1.7;color:#424854;\">">>,
+        u("Нажмите кнопку ниже. После подтверждения откроется страница, где можно сразу скопировать и вставить готовую ссылку в Telegram."),
+        <<"</p>">>,
+        <<"<p style=\"margin:0 0 24px;\"><a href=\"">>, VerifyUrl, <<"\" style=\"display:inline-block;padding:15px 22px;border-radius:999px;background:#1d7a49;color:#fff;text-decoration:none;font-weight:700;\">">>,
+        u("Получить прокси"),
+        <<"</a></p>">>,
+        <<"<p style=\"margin:0 0 12px;font-size:14px;line-height:1.7;color:#5d6470;\">">>,
+        u("Если кнопка не работает, откройте эту ссылку вручную:"),
+        <<"</p>">>,
         <<"<p style=\"margin:0 0 24px;font-size:14px;line-height:1.7;word-break:break-word;\"><a href=\"">>, VerifyUrl, <<"\" style=\"color:#933915;\">">>, VerifyUrl, <<"</a></p>">>,
-        <<"<p style=\"margin:0;font-size:13px;line-height:1.7;color:#7a828f;\">Если вы не запрашивали прокси, просто проигнорируйте это письмо.</p>">>,
+        <<"<p style=\"margin:0;font-size:13px;line-height:1.7;color:#7a828f;\">">>,
+        u("Если вы не запрашивали прокси, просто проигнорируйте это письмо."),
+        <<"</p>">>,
         <<"</td></tr></table></td></tr></table></body></html>">>
     ]),
     Text = iolist_to_binary([

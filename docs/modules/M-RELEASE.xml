@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.5.0">
+<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.6.0">
   <Purpose>Build a single deployable Erlang release and container image containing both proxy and portal capabilities.</Purpose>
   <Scope>
     <Item>Compose upstream codebases into one runtime artifact</Item>
     <Item>Define the Dockerfile and build-time dependencies</Item>
+    <Item>Compile and boot user-facing Erlang sources with explicit UTF-8-safe handling for Cyrillic literals</Item>
+    <Item>Inject `mtproto_proxy` per-SNI secret settings from env at runtime</Item>
     <Item>Expose release configuration surfaces used in production</Item>
   </Scope>
   <Interfaces>
@@ -34,9 +36,11 @@
     <Artifact>tests/release/validate_entrypoint.sh</Artifact>
     <Artifact>tests/release/validate_rebar_project.sh</Artifact>
     <Artifact>tests/release/validate_release_wrapper.sh</Artifact>
+    <Artifact>tests/release/validate_utf8_runtime_copy.sh</Artifact>
   </Implementation>
   <Risks>
     <Risk>Combining upstream repositories may introduce release-time dependency conflicts</Risk>
+    <Risk>Encoding drift between source files and build flags can corrupt user-facing copy at runtime</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-DEPLOY" REL="image-used-by"/>

@@ -40,5 +40,6 @@
     <Decision ID="TD-002">Use DETS because the target topology is a single VPS with low operational overhead.</Decision>
     <Decision ID="TD-003">Treat wildcard certificate provisioning as an explicit operational risk because DNS-01 is likely required.</Decision>
     <Decision ID="TD-004">Expose user-friendly errors for Resend and verification failures instead of silent fallback behavior.</Decision>
+    <Decision ID="TD-005">Use `mtproto_proxy` per-SNI derived secrets plus a private salt so issued domains are cryptographically meaningful and raw base-secret reuse is rejected.</Decision>
   </DecisionLog>
 </MyGRACE-Technology>

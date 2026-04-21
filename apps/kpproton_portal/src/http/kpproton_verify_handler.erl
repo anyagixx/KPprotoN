@@ -1,8 +1,9 @@
+%% coding: utf-8
 -module(kpproton_verify_handler).
 -behaviour(cowboy_handler).
 
 %% FILE: apps/kpproton_portal/src/http/kpproton_verify_handler.erl
-%% VERSION: 1.3.0
+%% VERSION: 1.4.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Render the verification-side HTML response contract for consumed tokens and issued proxy links.
 %%   SCOPE: Invalid token handling, consumed-token success rendering, and operator-safe error HTML mapping.
@@ -15,7 +16,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.3.0 - Replaced raw verification output with a styled result page, copy actions, and manual MTProto setup guidance.
+%%   LAST_CHANGE: v1.4.0 - Added explicit UTF-8 source encoding so verify success and error pages keep readable Cyrillic copy after compilation.
 %% END_CHANGE_SUMMARY
 
 -export([init/2, render_verify_result/1]).
@@ -106,7 +107,9 @@ render_error_page(Title, Message) ->
     render_layout(
       Title,
       Message,
-      <<"<div class=\"result-error\">Если вы открыли старое письмо, запросите новую ссылку на главной странице.</div>">>
+      [<<"<div class=\"result-error\">">>,
+       u("Если вы открыли старое письмо, запросите новую ссылку на главной странице."),
+       <<"</div>">>]
     ).
 
 render_result_field(Label, Id, Value, ButtonLabel) ->
@@ -144,8 +147,8 @@ render_verify_result(#{email := Email, tg_link := TgLink, sni := SniDomain}) ->
       u("Откройте ссылку в Telegram или скопируйте данные для ручного добавления MTProto-прокси."),
       iolist_to_binary([
           <<"<div class=\"result-actions\">">>,
-          <<"<a class=\"primary-link\" href=\"">>, html_escape(TgLink), <<"\">Открыть в Telegram</a>">>,
-          <<"<button type=\"button\" class=\"copy-button\" data-copy=\"proxy-link\">Скопировать tg://proxy</button></div>">>,
+          <<"<a class=\"primary-link\" href=\"">>, html_escape(TgLink), <<"\">">>, u("Открыть в Telegram"), <<"</a>">>,
+          <<"<button type=\"button\" class=\"copy-button\" data-copy=\"proxy-link\">">>, u("Скопировать tg://proxy"), <<"</button></div>">>,
           <<"<article class=\"result-card\"><div class=\"result-field\">">>,
           <<"<span class=\"result-label\">tg://proxy</span>">>,
           <<"<code class=\"result-value\" id=\"proxy-link\" data-copy-value=\"">>, html_escape(TgLink), <<"\">">>, html_escape(TgLink), <<"</code>">>,
@@ -158,8 +161,21 @@ render_verify_result(#{email := Email, tg_link := TgLink, sni := SniDomain}) ->
           <<"<article class=\"result-card\"><div class=\"result-field\">">>,
           <<"<span class=\"result-label\">Email</span><code class=\"result-value\">">>, html_escape(Email), <<"</code></div>">>,
           <<"<div class=\"result-field\"><span class=\"result-label\">SNI</span><code class=\"result-value\">">>, html_escape(SniDomain), <<"</code></div></article>">>,
-          <<"<article class=\"result-card\"><div class=\"result-note\"><strong>Ручная настройка в Telegram:</strong> откройте Telegram → Настройки → Данные и память → Прокси → Добавить прокси → MTProto.">>,
-          <<"<br><br>Вставьте <strong>Сервер</strong> в поле Server, <strong>Порт</strong> в поле Port и <strong>Secret</strong> в поле Secret. Если Telegram уже открыл ссылку <code>tg://proxy</code>, вручную ничего вводить не нужно.</div></article>">>
+          <<"<article class=\"result-card\"><div class=\"result-note\"><strong>">>,
+          u("Ручная настройка в Telegram:"),
+          <<"</strong> ">>,
+          u("откройте Telegram → Настройки → Данные и память → Прокси → Добавить прокси → MTProto."),
+          <<"<br><br>">>,
+          u("Вставьте "),
+          <<"<strong>">>, u("Сервер"), <<"</strong>">>,
+          u(" в поле Server, "),
+          <<"<strong>">>, u("Порт"), <<"</strong>">>,
+          u(" в поле Port и "),
+          <<"<strong>Secret</strong>">>,
+          u(" в поле Secret. Если Telegram уже открыл ссылку "),
+          <<"<code>tg://proxy</code>">>,
+          u(", вручную ничего вводить не нужно."),
+          <<"</div></article>">>
       ])
     );
 render_verify_result({error, mtproto_policy_table_unavailable}) ->

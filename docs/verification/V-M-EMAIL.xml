@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-EMAIL MODULE="M-EMAIL" PRIORITY="high" STATUS="done" VERSION="1.6.0">
+<V-M-EMAIL MODULE="M-EMAIL" PRIORITY="high" STATUS="done" VERSION="1.9.0">
   <test-files>
     <file>tests/resend/validate_resend_adapter.sh</file>
+    <file>tests/resend/validate_email_template.sh</file>
     <file>tests/resend/validate_resend_errors.sh</file>
     <file>tests/resend/validate_resend_operator_evidence.sh</file>
+    <file>tests/release/validate_utf8_runtime_copy.sh</file>
   </test-files>
   <module-checks>
     <check-1 evidence="deterministic">bash tests/resend/validate_resend_adapter.sh</check-1>
-    <check-2 evidence="deterministic">bash tests/resend/validate_resend_errors.sh</check-2>
-    <check-3 evidence="deterministic">bash tests/resend/validate_resend_operator_evidence.sh</check-3>
+    <check-2 evidence="deterministic">bash tests/resend/validate_email_template.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/resend/validate_resend_errors.sh</check-3>
+    <check-4 evidence="deterministic">bash tests/resend/validate_resend_operator_evidence.sh</check-4>
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">Resend accepts the magic-link payload and returns a delivery identifier.</scenario-1>
     <scenario-2 kind="failure">401 is mapped to an operator-actionable credential error.</scenario-2>
     <scenario-3 kind="failure">429, 500, and timeout conditions are mapped to retryable delivery failures.</scenario-3>
+    <scenario-4 kind="success">Subject, HTML, and text payload members remain readable UTF-8 Russian copy after JSON encoding.</scenario-4>
   </scenarios>
   <critical-invariants>
     <invariant-1>Email payload contains a verification URL rooted at `https://BASE_DOMAIN/verify`.</invariant-1>
     <invariant-2>Provider-specific errors are normalized before reaching HTTP handlers.</invariant-2>
+    <invariant-3>User-facing payload content remains readable UTF-8 across provider transport boundaries.</invariant-3>
   </critical-invariants>
   <side-effects>
     <effect-1>Calls external Resend HTTP API.</effect-1>
@@ -35,8 +40,14 @@
     <wave-level>Adapter exercised against mocked provider responses.</wave-level>
     <phase-level>Email request flow shows correct user and operator behavior under provider failures.</phase-level>
   </verification-levels>
+  <evidence>
+    <item>`validate_resend_adapter.sh` proves adapter-to-template wiring.</item>
+    <item>`validate_email_template.sh` is the current deterministic guard against Russian-copy mojibake.</item>
+    <item>`validate_utf8_runtime_copy.sh` proves compiled runtime output keeps readable Russian email copy.</item>
+  </evidence>
   <production-gates>
     <gate-1>Credential failure, provider throttling, and provider outage are distinguishable in operator evidence.</gate-1>
     <gate-2>Magic-link payload always targets `https://BASE_DOMAIN/verify` and never leaks API credentials.</gate-2>
+    <gate-3>Resend-bound JSON payload never contains mojibake in Russian subject or body fields.</gate-3>
   </production-gates>
 </V-M-EMAIL>

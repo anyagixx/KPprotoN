@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGRACE-PhasePlan ID="Phase-7" NAME="Encoding and Access Hardening" STATUS="pending">
+  <Goal>Eliminate UTF-8 mojibake in user-facing delivery surfaces and make MTProto access depend on issued per-SNI credentials rather than the shared base secret.</Goal>
+  <Steps COUNT="5">
+    <step-1 status="done" module="M-RELEASE,M-EMAIL,M-EMAIL-TEMPLATE,M-WEB-API,M-VERIFY-UX">
+      Define explicit UTF-8-safe source, build, payload, and `/verify` rendering expectations for all Russian user-facing copy.
+    </step-1>
+    <step-2 status="pending" module="M-CONFIG,M-RELEASE">
+      Add a private per-SNI secret salt to the runtime configuration contract and propagate it into the unified Erlang release boot path.
+    </step-2>
+    <step-3 status="pending" module="M-PROXY-ISSUE,M-WEB-API">
+      Replace raw-secret client credential assembly with derived per-SNI fake-TLS secrets and define idempotent reissue behavior for existing users.
+    </step-3>
+    <step-4 status="pending" module="M-PROXY-BRIDGE,M-PROXY-ISSUE">
+      Align domain whitelist policy application with per-SNI secret enforcement so only issued domains with derived credentials can authenticate.
+    </step-4>
+    <step-5 status="pending" module="M-CONFIG,M-EMAIL-TEMPLATE,M-WEB-API,M-PROXY-ISSUE,M-PROXY-BRIDGE">
+      Define migration, regression, and rollout gates including forced reissue of previously delivered links after per-SNI secret rollout.
+    </step-5>
+  </Steps>
+  <ExitCriteria>
+    <Item>Verification email subject, HTML, text, and `/verify` result pages render readable UTF-8 Russian copy end-to-end.</Item>
+    <Item>Client access using raw `PROXY_SECRET_HEX` is rejected once hardening is enabled; only issued derived credentials succeed.</Item>
+    <Item>Operator documentation and verification gates explicitly cover salt handling and reissuing all previously issued fake-TLS links.</Item>
+  </ExitCriteria>
+</MyGRACE-PhasePlan>

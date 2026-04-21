@@ -15,6 +15,7 @@ require_pattern() {
 }
 
 [[ -f "${FILE}" ]] || fail "missing request handler"
+require_pattern '^%% coding: utf-8$'
 require_pattern '-export\(\[init/2, validate_email/1, handle_request/1, health_response/0\]\)'
 require_pattern 'invalid_email'
 require_pattern '\[M-WEB-API\]\[request_email\]\[VALIDATE_INPUT\]'

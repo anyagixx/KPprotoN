@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-EMAIL-TEMPLATE MODULE="M-EMAIL-TEMPLATE" PRIORITY="high" STATUS="done" VERSION="1.1.0">
+<V-M-EMAIL-TEMPLATE MODULE="M-EMAIL-TEMPLATE" PRIORITY="high" STATUS="done" VERSION="1.4.0">
   <test-files>
     <file>tests/resend/validate_resend_adapter.sh</file>
     <file>tests/resend/validate_email_template.sh</file>
+    <file>tests/release/validate_utf8_runtime_copy.sh</file>
   </test-files>
   <module-checks>
-    <check-1 evidence="deterministic">Validate subject/body template generation for HTML and text variants.</check-1>
+    <check-1 evidence="deterministic">bash tests/resend/validate_email_template.sh</check-1>
+    <check-2 evidence="deterministic">bash tests/resend/validate_resend_adapter.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/release/validate_utf8_runtime_copy.sh</check-3>
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">Verification email subject clearly explains proxy access confirmation.</scenario-1>
     <scenario-2 kind="success">HTML email includes CTA button, fallback link, and UTF-8-safe readable text.</scenario-2>
     <scenario-3 kind="failure">Templates never render mojibake or raw placeholder garbage in Russian copy.</scenario-3>
+    <scenario-4 kind="failure">Rendered subject, HTML, and text variants never degrade into mojibake after JSON encoding.</scenario-4>
   </scenarios>
+  <critical-invariants>
+    <invariant-1>Subject, HTML, and text outputs are valid UTF-8 binaries.</invariant-1>
+    <invariant-2>Russian copy remains readable after JSON encoding and provider transport.</invariant-2>
+  </critical-invariants>
   <required-log-markers>
     <marker-1>[M-EMAIL][send_magic_link][BUILD_REQUEST]</marker-1>
   </required-log-markers>
+  <verification-levels>
+    <module-local>Template render checks for subject, HTML, and text binaries.</module-local>
+    <wave-level>Adapter payload checks after JSON encoding.</wave-level>
+    <phase-level>Delivered email remains readable in the live request flow.</phase-level>
+  </verification-levels>
   <evidence>
-    <item>bash tests/resend/validate_resend_adapter.sh</item>
     <item>bash tests/resend/validate_email_template.sh</item>
+    <item>bash tests/resend/validate_resend_adapter.sh</item>
+    <item>bash tests/release/validate_utf8_runtime_copy.sh</item>
+    <item>`validate_email_template.sh` currently asserts the shipped Russian literals and payload members.</item>
+    <item>`validate_resend_adapter.sh` confirms the adapter keeps using the template builder in the outbound request path.</item>
+    <item>`validate_utf8_runtime_copy.sh` proves compiled email subject/body remain readable after beam generation.</item>
   </evidence>
+  <production-gates>
+    <gate-1>No email variant contains mojibake for Cyrillic copy.</gate-1>
+    <gate-2>Compiled runtime probe for email subject/body stays green after every release-affecting change.</gate-2>
+  </production-gates>
 </V-M-EMAIL-TEMPLATE>

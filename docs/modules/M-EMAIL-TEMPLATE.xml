@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.1.0">
-  <Purpose>Render clear, branded, UTF-8-safe email subject and body templates for the magic-link delivery flow.</Purpose>
+<M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.2.0">
+  <Purpose>Render clear, branded, UTF-8-safe and transport-stable email subject and body templates for the magic-link delivery flow.</Purpose>
   <Scope>
     <Item>Generate a meaningful subject line that explains proxy access verification</Item>
     <Item>Generate HTML email with CTA button and readable structure</Item>
     <Item>Generate plain-text fallback without mojibake or broken copy</Item>
+    <Item>Assemble binaries that remain readable after Erlang compilation and JSON encoding</Item>
     <Item>Keep wording aligned with portal and verify UX</Item>
   </Scope>
   <Interfaces>

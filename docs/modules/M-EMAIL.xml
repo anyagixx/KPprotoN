@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-EMAIL NAME="Resend Adapter" TYPE="INTEGRATION" STATUS="done" VERSION="1.5.0">
-  <Purpose>Send verification emails through the Resend API and normalize provider-specific failures.</Purpose>
+<M-EMAIL NAME="Resend Adapter" TYPE="INTEGRATION" STATUS="done" VERSION="1.6.0">
+  <Purpose>Send verification emails through the Resend API, preserve readable UTF-8 payload content, and normalize provider-specific failures.</Purpose>
   <Scope>
     <Item>Build email payloads with magic links</Item>
+    <Item>Pass subject, HTML, and text bodies through JSON transport without Cyrillic mojibake</Item>
     <Item>Authenticate using `RESEND_API_KEY`</Item>
     <Item>Map provider and transport failures into application-level errors</Item>
   </Scope>
@@ -26,6 +27,7 @@
   <Risks>
     <Risk>401 and 429 responses must be distinguishable for operators</Risk>
     <Risk>Provider outage should degrade gracefully for users</Risk>
+    <Risk>Payload encoding drift can produce unreadable verification emails even when delivery succeeds</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-WEB-API" REL="called-by"/>

@@ -15,7 +15,8 @@ require_pattern() {
 }
 
 [[ -f "${FILE}" ]] || fail "missing proxy issue contract"
-require_pattern '#\{tg_link := _\} = Assignment'
+require_pattern '#\{sni := ExistingSni\} = Assignment'
+require_pattern 'credential_mode => derived_per_sni'
 require_pattern 'policy_action => reuse'
 require_pattern 'sni => SniDomain'
 require_pattern 'tg_link => TgLink'

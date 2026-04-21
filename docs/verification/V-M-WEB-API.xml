@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" VERSION="1.11.0">
+<V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" VERSION="1.12.0">
   <test-files>
     <file>tests/http/validate_request_handler.sh</file>
     <file>tests/http/validate_verify_contract.sh</file>
@@ -45,6 +45,7 @@
   <evidence>
     <item>`validate_verify_contract.sh` guards verify handler structure and key Russian strings.</item>
     <item>`validate_verify_ux.sh` guards rendered copy affordances and manual setup fields.</item>
+    <item>`validate_verify_contract.sh` now also proves the `/verify` path passes `PROXY_SECRET_SALT` into proxy issuance.</item>
     <item>`validate_utf8_runtime_copy.sh` proves compiled `/api/request` and `/verify` outputs keep readable Russian copy.</item>
   </evidence>
   <production-gates>
@@ -52,5 +53,6 @@
     <gate-2>Operator-facing logs distinguish request validation, dispatch, consume, and render phases.</gate-2>
     <gate-3>`/verify` success and error pages show no mojibake in shipped Russian copy.</gate-3>
     <gate-4>Compiled runtime probe for `/api/request` and `/verify` stays green after every release-affecting change.</gate-4>
+    <gate-5>`/verify` never rebuilds a user link without passing the private per-SNI salt into provisioning.</gate-5>
   </production-gates>
 </V-M-WEB-API>

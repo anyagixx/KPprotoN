@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-PROXY-ISSUE MODULE="M-PROXY-ISSUE" PRIORITY="high" STATUS="done" VERSION="1.8.0">
+<V-M-PROXY-ISSUE MODULE="M-PROXY-ISSUE" PRIORITY="high" STATUS="done" VERSION="1.9.0">
   <test-files>
     <file>tests/provisioning/validate_proxy_issue_contract.sh</file>
+    <file>tests/provisioning/validate_proxy_issue_derivation.sh</file>
     <file>tests/provisioning/validate_proxy_issue_idempotency.sh</file>
     <file>tests/provisioning/validate_proxy_issue_readiness.sh</file>
   </test-files>
   <module-checks>
     <check-1 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_contract.sh</check-1>
-    <check-2 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_idempotency.sh</check-2>
-    <check-3 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_readiness.sh</check-3>
+    <check-2 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_derivation.sh</check-2>
+    <check-3 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_idempotency.sh</check-3>
+    <check-4 evidence="deterministic">bash tests/provisioning/validate_proxy_issue_readiness.sh</check-4>
   </module-checks>
   <scenarios>
     <scenario-1 kind="success">Verified email receives a unique SNI assignment and a valid `tg://proxy` link with a derived per-SNI secret.</scenario-1>
@@ -38,13 +40,13 @@
     <phase-level>User verifies email and immediately receives a working client link.</phase-level>
   </verification-levels>
   <evidence>
-    <item>`validate_proxy_issue_contract.sh` and `validate_proxy_issue_readiness.sh` currently prove deterministic SNI generation and link assembly structure.</item>
-    <item>Phase-7 still needs a deterministic probe that inspects the emitted fake-TLS secret and proves it is derived rather than raw-base-secret based.</item>
+    <item>`validate_proxy_issue_contract.sh` and `validate_proxy_issue_readiness.sh` prove deterministic SNI generation and derived-link assembly structure.</item>
+    <item>`validate_proxy_issue_derivation.sh` compiles the project and proves fresh issuance plus idempotent reuse emit derived per-SNI fake-TLS credentials rather than the raw base secret.</item>
   </evidence>
   <production-gates>
     <gate-1>Idempotent reissue must return `reuse` rather than allocating a second SNI.</gate-1>
     <gate-2>Fresh issuance must emit `apply_domain_policy` before a success page can be considered valid.</gate-2>
     <gate-3>Fresh and reused issuance never return a credential assembled from the raw base secret after hardening rollout.</gate-3>
-    <gate-4>Autonomous rollout is unsafe until a deterministic tg-link secret-derivation assertion exists in repo-local verification.</gate-4>
+    <gate-4>Deterministic tg-link secret-derivation checks remain green for both fresh issuance and reuse paths.</gate-4>
   </production-gates>
 </V-M-PROXY-ISSUE>

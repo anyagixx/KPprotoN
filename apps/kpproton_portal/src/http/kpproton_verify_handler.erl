@@ -3,7 +3,7 @@
 -behaviour(cowboy_handler).
 
 %% FILE: apps/kpproton_portal/src/http/kpproton_verify_handler.erl
-%% VERSION: 1.4.0
+%% VERSION: 1.5.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Render the verification-side HTML response contract for consumed tokens and issued proxy links.
 %%   SCOPE: Invalid token handling, consumed-token success rendering, and operator-safe error HTML mapping.
@@ -16,7 +16,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.4.0 - Added explicit UTF-8 source encoding so verify success and error pages keep readable Cyrillic copy after compilation.
+%%   LAST_CHANGE: v1.5.0 - Pass the private per-SNI salt into issuance so `/verify` reissues derived credentials for both fresh and existing users.
 %% END_CHANGE_SUMMARY
 
 -export([init/2, render_verify_result/1]).
@@ -38,6 +38,7 @@ init(Req0, State) ->
                             Email,
                             kpproton_runtime:base_domain(),
                             kpproton_runtime:proxy_secret(),
+                            kpproton_runtime:proxy_secret_salt(),
                             Existing,
                             kpproton_runtime:proxy_port()
                         ),

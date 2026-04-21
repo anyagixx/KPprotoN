@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" VERSION="1.6.0">
+<M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" VERSION="1.7.0">
   <Purpose>Translate a verified email into a durable, user-specific MTProto proxy assignment and a cryptographically bound client link.</Purpose>
   <Scope>
     <Item>Generate a unique SNI subdomain such as `hex.base-domain`</Item>
@@ -23,6 +23,7 @@
   <Implementation>
     <Artifact>apps/kpproton_proxy/src/provisioning/kpproton_proxy_issue.erl</Artifact>
     <Artifact>tests/provisioning/validate_proxy_issue_contract.sh</Artifact>
+    <Artifact>tests/provisioning/validate_proxy_issue_derivation.sh</Artifact>
     <Artifact>tests/provisioning/validate_proxy_issue_idempotency.sh</Artifact>
     <Artifact>tests/provisioning/validate_proxy_issue_readiness.sh</Artifact>
   </Implementation>

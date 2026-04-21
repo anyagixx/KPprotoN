@@ -23,5 +23,6 @@ require_pattern 'Ссылка недействительна'
 require_pattern 'Прокси готов'
 require_pattern 'tg://proxy'
 require_pattern 'kpproton_registry:open_registry'
+require_pattern 'kpproton_runtime:proxy_secret_salt\(\)'
 
 echo "[M-WEB-API][verify_token][RENDER_RESULT] ok"

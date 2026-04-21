@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: tests/config/validate_env_example.sh
-# VERSION: 1.0.0
+# VERSION: 1.1.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Validate that deploy/.env.example contains the required shared configuration keys.
 #   SCOPE: Presence checks for the canonical env contract used by foundation modules.
@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.0.0 - Added foundational env contract validation for shared config keys.
+#   LAST_CHANGE: v1.1.0 - Require a dedicated per-SNI secret salt in the shared env contract.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -49,6 +49,7 @@ PROXY_HOST
 RESEND_API_KEY
 RESEND_FROM
 PROXY_SECRET_HEX
+PROXY_SECRET_SALT
 PROXY_PORT
 PROXY_AD_TAG
 PROXY_LISTEN_IP

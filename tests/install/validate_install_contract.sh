@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: tests/install/validate_install_contract.sh
-# VERSION: 1.0.0
+# VERSION: 1.1.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Validate that install.sh preserves the required operator flow and integration hooks.
 #   SCOPE: Static pattern checks for prompts, Docker bootstrap, env generation, cert call, and compose launch.
@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.3.0 - Require operator warning for self-signed certificate imports.
+#   LAST_CHANGE: v1.4.0 - Require installer generation and persistence of a dedicated per-SNI secret salt.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -37,11 +37,13 @@ require_pattern 'prompt_value '\''BASE_DOMAIN'\'''
 require_pattern 'prompt_value '\''RESEND_API_KEY'\'''
 require_pattern 'prompt_choice '\''TLS_MODE'\'''
 require_pattern 'generate_proxy_secret'
+require_pattern 'generate_proxy_secret_salt'
 require_pattern 'install_docker_stack'
 require_pattern 'run_cert_bootstrap'
 require_pattern 'import_existing_certificates'
 require_pattern 'EXISTING_CERT_FULLCHAIN_PATH'
 require_pattern 'EXISTING_CERT_PRIVKEY_PATH'
+require_pattern '"PROXY_SECRET_SALT": proxy_secret_salt'
 require_pattern 'WARNING: imported certificate looks self-signed'
 require_pattern 'docker compose --env-file'
 

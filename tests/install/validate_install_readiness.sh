@@ -20,6 +20,7 @@ grep -Eq 'import_existing_certificates' "${INSTALL_FILE}" || fail "installer doe
 grep -Eq 'TLS_MODE' "${INSTALL_FILE}" || fail "installer does not branch by TLS mode"
 grep -Eq 'docker compose --env-file' "${INSTALL_FILE}" || fail "installer does not invoke compose with generated env"
 grep -Eq '^BASE_DOMAIN=' "${ENV_FILE}" || fail "env template missing BASE_DOMAIN"
+grep -Eq '^PROXY_SECRET_SALT=' "${ENV_FILE}" || fail "env template missing PROXY_SECRET_SALT"
 grep -Eq '443:\$\{HOST_HTTPS_TARGET_PORT:-443\}' "${COMPOSE_FILE}" || fail "compose contract missing configurable 443 edge"
 
 echo "[M-INSTALL][run][COMPOSE_UP] readiness-ok"

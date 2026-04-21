@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.8.0">
+<V-M-INSTALL MODULE="M-INSTALL" PRIORITY="high" STATUS="done" VERSION="1.9.0">
   <test-files>
     <file>tests/install/validate_install_contract.sh</file>
     <file>tests/install/validate_install_syntax.sh</file>
@@ -16,10 +16,11 @@
     <scenario-1c kind="success">Fresh Ubuntu host imports an existing `fullchain.pem` and `privkey.pem` pair and reaches compose startup without invoking Certbot.</scenario-1c>
     <scenario-2 kind="failure">Invalid domain, missing sudo, interrupted package install, or incomplete manual DNS propagation returns actionable operator guidance without skipping wildcard issuance.</scenario-2>
     <scenario-3 kind="failure">Rerun after partial install remains idempotent and does not corrupt `.env` or volumes.</scenario-3>
+    <scenario-4 kind="success">Installer materializes a dedicated `PROXY_SECRET_SALT` that stays distinct from `PROXY_SECRET_HEX`.</scenario-4>
   </scenarios>
   <critical-invariants>
     <invariant-1>`BASE_DOMAIN` and `RESEND_API_KEY` remain the first interactive prompts.</invariant-1>
-    <invariant-2>Generated proxy secret and env file are persisted before compose startup.</invariant-2>
+    <invariant-2>Generated proxy secret, per-SNI salt, and env file are persisted before compose startup.</invariant-2>
     <invariant-3>When `TLS_MODE=use-existing`, installer validates and stages certificate files before compose startup.</invariant-3>
   </critical-invariants>
   <side-effects>
@@ -44,5 +45,6 @@
     <gate-1>Installer blocks on missing wildcard DNS-01 prerequisites instead of faking success.</gate-1>
     <gate-2>Final portal URL is emitted only after compose startup is invoked.</gate-2>
     <gate-3>Guided manual DNS-01 waits for operator confirmation and propagation visibility before compose startup.</gate-3>
+    <gate-4>Installer never reuses `PROXY_SECRET_HEX` as the per-SNI salt value.</gate-4>
   </production-gates>
 </V-M-INSTALL>

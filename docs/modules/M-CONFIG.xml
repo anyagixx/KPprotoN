@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" VERSION="1.6.0">
+<M-CONFIG NAME="Runtime Config" TYPE="UTILITY" STATUS="done" VERSION="1.7.0">
   <Purpose>Provide the canonical source of deployment and runtime configuration for all KPprotoN modules.</Purpose>
   <Scope>
     <Item>Normalize environment variables</Item>
@@ -23,6 +23,7 @@
     <Artifact>deploy/.env.example</Artifact>
     <Artifact>tests/config/validate_env_example.sh</Artifact>
     <Artifact>tests/config/validate_runtime_paths.sh</Artifact>
+    <Artifact>install.sh</Artifact>
   </Implementation>
   <Risks>
     <Risk>Configuration drift between shell, Docker Compose, and Erlang runtime</Risk>

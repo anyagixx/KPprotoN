@@ -1,3 +1,23 @@
+%% FILE: src/kpproton_app.erl
+%% VERSION: 1.1.0
+%% START_MODULE_CONTRACT
+%%   PURPOSE: Start the unified KPprotoN OTP application and configure upstream runtime integrations before supervision begins.
+%%   SCOPE: Read env-backed release settings, inject `mtproto_proxy` application config, seed the base domain, and start the top-level supervisor.
+%%   DEPENDS: M-CONFIG, M-RELEASE, M-PROXY-BRIDGE
+%%   LINKS: M-CONFIG, M-RELEASE, M-PROXY-BRIDGE
+%% END_MODULE_CONTRACT
+%%
+%% START_MODULE_MAP
+%%   start/2 - configures the runtime and starts the supervisor tree
+%%   stop/1 - stops the OTP application
+%%   seed_base_domain/0 - inserts the apex domain into the MTProto policy table
+%%   mtproxy_boot_retry_ms/0 - returns the mtproto boot retry interval
+%% END_MODULE_MAP
+%%
+%% START_CHANGE_SUMMARY
+%%   LAST_CHANGE: v1.1.0 - Inject a private per-SNI secret salt into mtproto_proxy before listener startup.
+%% END_CHANGE_SUMMARY
+
 -module(kpproton_app).
 -behaviour(application).
 
@@ -20,6 +40,7 @@ env_integer(Key, Default) ->
 
 configure_mtproto_proxy() ->
     Secret = env_binary("PROXY_SECRET_HEX", <<"0123456789abcdef0123456789abcdef">>),
+    SecretSalt = kpproton_runtime:proxy_secret_salt(),
     Tag = env_binary("PROXY_AD_TAG", <<>>),
     Port = env_integer("PROXY_PORT", 443),
     DomainFronting = env_string("PORTAL_DOMAIN_FRONTING", "127.0.0.1:8443"),
@@ -41,6 +62,7 @@ configure_mtproto_proxy() ->
     ok = application:set_env(mtproto_proxy, core_api_http_timeout_ms, env_integer("CORE_API_HTTP_TIMEOUT_MS", 10000)),
     ok = application:set_env(mtproto_proxy, proxy_secret_url, LocalBootstrapBase ++ "/proxy-secret"),
     ok = application:set_env(mtproto_proxy, proxy_config_url, LocalBootstrapBase ++ "/proxy-config"),
+    ok = application:set_env(mtproto_proxy, per_sni_secret_salt, SecretSalt),
     ok = application:set_env(mtproto_proxy, policy, [
         {in_table, tls_domain, personal_domains},
         {max_connections, [tls_domain], env_integer("MAX_CONNECTIONS_PER_DOMAIN", 100)}

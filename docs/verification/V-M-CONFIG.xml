@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-CONFIG MODULE="M-CONFIG" PRIORITY="medium" STATUS="done" VERSION="1.7.0">
+<V-M-CONFIG MODULE="M-CONFIG" PRIORITY="medium" STATUS="done" VERSION="1.8.0">
   <test-files>
     <file>tests/config/validate_env_example.sh</file>
     <file>tests/config/validate_runtime_paths.sh</file>
@@ -40,11 +40,11 @@
   <evidence>
     <item>bash tests/config/validate_env_example.sh</item>
     <item>bash tests/config/validate_runtime_paths.sh</item>
-    <item>Phase-7 rollout remains blocked until config validation asserts presence of `PROXY_SECRET_SALT` or equivalent private salt input.</item>
+    <item>Config validation now asserts that `PROXY_SECRET_SALT` exists, is 32 lowercase hex characters, and is distinct from `PROXY_SECRET_HEX`.</item>
   </evidence>
   <production-gates>
     <gate-1>`PROXY_SECRET_SALT` is defined before per-SNI secret enforcement is rolled out.</gate-1>
     <gate-2>Release and runtime read the same salt value without exposing it in logs.</gate-2>
-    <gate-3>Autonomous execution is unsafe until a deterministic config check fails fast on missing per-SNI salt.</gate-3>
+    <gate-3>Deterministic config checks remain green for presence, shape, and distinctness of the per-SNI salt.</gate-3>
   </production-gates>
 </V-M-CONFIG>

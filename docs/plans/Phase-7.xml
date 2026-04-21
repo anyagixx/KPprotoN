@@ -5,7 +5,7 @@
     <step-1 status="done" module="M-RELEASE,M-EMAIL,M-EMAIL-TEMPLATE,M-WEB-API,M-VERIFY-UX">
       Define explicit UTF-8-safe source, build, payload, and `/verify` rendering expectations for all Russian user-facing copy.
     </step-1>
-    <step-2 status="pending" module="M-CONFIG,M-RELEASE">
+    <step-2 status="done" module="M-CONFIG,M-RELEASE">
       Add a private per-SNI secret salt to the runtime configuration contract and propagate it into the unified Erlang release boot path.
     </step-2>
     <step-3 status="pending" module="M-PROXY-ISSUE,M-WEB-API">

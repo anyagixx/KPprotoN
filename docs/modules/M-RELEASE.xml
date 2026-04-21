@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.6.0">
+<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.7.0">
   <Purpose>Build a single deployable Erlang release and container image containing both proxy and portal capabilities.</Purpose>
   <Scope>
     <Item>Compose upstream codebases into one runtime artifact</Item>
@@ -36,6 +36,7 @@
     <Artifact>tests/release/validate_entrypoint.sh</Artifact>
     <Artifact>tests/release/validate_rebar_project.sh</Artifact>
     <Artifact>tests/release/validate_release_wrapper.sh</Artifact>
+    <Artifact>tests/release/validate_per_sni_runtime_config.sh</Artifact>
     <Artifact>tests/release/validate_utf8_runtime_copy.sh</Artifact>
   </Implementation>
   <Risks>

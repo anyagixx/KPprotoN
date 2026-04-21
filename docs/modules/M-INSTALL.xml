@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.7.0">
+<M-INSTALL NAME="VPS Installer" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.8.0">
   <Purpose>Bootstrap a clean Ubuntu VPS into a running KPprotoN deployment through a single `install.sh` entry point.</Purpose>
   <Scope>
     <Item>Prompt for `BASE_DOMAIN` and `RESEND_API_KEY` first</Item>
     <Item>Install Docker Engine and Docker Compose plugin if absent</Item>
-    <Item>Generate proxy secret and `.env` values</Item>
+    <Item>Generate proxy secret, private per-SNI salt, and `.env` values</Item>
     <Item>Choose between issuing a new wildcard certificate and importing an existing certificate pair</Item>
     <Item>Trigger certificate provisioning or certificate import before container startup</Item>
     <Item>Preserve a guided manual wildcard DNS-01 flow for every new certificate issuance</Item>
@@ -32,6 +32,7 @@
   <Risks>
     <Risk>Idempotency across partial installs</Risk>
     <Risk>Operator confusion around wildcard DNS challenge prerequisites</Risk>
+    <Risk>Reusing the base MTProto secret as the per-SNI salt would silently weaken access isolation</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-CERTS" REL="provisions-before-start"/>

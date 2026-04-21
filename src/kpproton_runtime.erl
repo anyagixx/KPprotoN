@@ -1,3 +1,25 @@
+%% FILE: src/kpproton_runtime.erl
+%% VERSION: 1.1.0
+%% START_MODULE_CONTRACT
+%%   PURPOSE: Expose canonical runtime configuration and token state to portal and proxy modules.
+%%   SCOPE: Read env-backed settings, store verification tokens, and provide shared getters for release-time components.
+%%   DEPENDS: M-CONFIG, M-TOKEN, M-RELEASE
+%%   LINKS: M-CONFIG, M-TOKEN, M-RELEASE, M-PROXY-ISSUE
+%% END_MODULE_CONTRACT
+%%
+%% START_MODULE_MAP
+%%   start_link/0 - starts the runtime token process
+%%   create_token/1 - creates and stores a verification token
+%%   consume_token/1 - consumes a stored verification token
+%%   base_domain/0 - returns the configured base domain
+%%   proxy_secret/0 - returns the base MTProto secret
+%%   proxy_secret_salt/0 - returns the private per-SNI derivation salt
+%% END_MODULE_MAP
+%%
+%% START_CHANGE_SUMMARY
+%%   LAST_CHANGE: v1.1.0 - Added a required per-SNI salt runtime getter for MTProto credential hardening.
+%% END_CHANGE_SUMMARY
+
 -module(kpproton_runtime).
 -behaviour(gen_server).
 
@@ -7,6 +29,7 @@
     consume_token/1,
     base_domain/0,
     proxy_secret/0,
+    proxy_secret_salt/0,
     proxy_port/0,
     token_ttl/0,
     resend_api_key/0,
@@ -36,6 +59,9 @@ base_domain() ->
 
 proxy_secret() ->
     env_binary("PROXY_SECRET_HEX", <<"0123456789abcdef0123456789abcdef">>).
+
+proxy_secret_salt() ->
+    required_env_binary("PROXY_SECRET_SALT").
 
 proxy_port() ->
     env_integer("PROXY_PORT", 443).
@@ -119,8 +145,18 @@ env_string(Key, Default) ->
 env_binary(Key, Default) ->
     unicode:characters_to_binary(env_string(Key, binary_to_list(Default))).
 
+required_env_binary(Key) ->
+    unicode:characters_to_binary(required_env_string(Key)).
+
 env_integer(Key, Default) ->
     case string:to_integer(env_string(Key, integer_to_list(Default))) of
         {Int, _} -> Int;
         _ -> Default
+    end.
+
+required_env_string(Key) ->
+    case os:getenv(Key) of
+        false -> erlang:error({missing_env, Key});
+        [] -> erlang:error({empty_env, Key});
+        Value -> Value
     end.

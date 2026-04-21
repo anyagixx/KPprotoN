@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: install.sh
-# VERSION: 1.3.0
+# VERSION: 1.5.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Bootstrap a clean Ubuntu host into a runnable KPprotoN deployment with minimal operator input.
 #   SCOPE: Collect domain and Resend API key, install Docker tooling, generate shared env, prepare storage, either provision or import certificates, and start compose.
@@ -15,6 +15,7 @@
 #   prompt_value - collects non-empty user input
 #   install_docker_stack - installs Docker Engine and Compose plugin when absent
 #   generate_proxy_secret - returns a 32-char hex secret
+#   generate_proxy_secret_salt - returns a private 32-char hex salt for per-SNI secret derivation
 #   prompt_choice - collects a validated install mode choice
 #   write_env_file - materializes .env from deploy/.env.example
 #   run_cert_bootstrap - invokes wildcard-aware TLS provisioning
@@ -23,7 +24,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.4.0 - Warn on self-signed certificate imports because Telegram fake-TLS proxies require a publicly trusted certificate chain.
+#   LAST_CHANGE: v1.5.0 - Generate and persist a dedicated per-SNI secret salt alongside the base MTProto secret.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -89,6 +90,10 @@ generate_proxy_secret() {
   openssl rand -hex 16
 }
 
+generate_proxy_secret_salt() {
+  openssl rand -hex 16
+}
+
 ensure_workspace_dirs() {
   mkdir -p "${ROOT_DIR}/volumes/data" "${ROOT_DIR}/volumes/certs" "${ROOT_DIR}/ops/certs"
 }
@@ -121,6 +126,7 @@ write_env_file() {
   local base_domain="$1"
   local resend_api_key="$2"
   local proxy_secret_hex="$3"
+  local proxy_secret_salt="$4"
   local certbot_email="admin@${base_domain}"
   local resend_from="KPprotoN <noreply@${base_domain}>"
 
@@ -128,12 +134,12 @@ write_env_file() {
 
   cp "${ENV_TEMPLATE}" "${ENV_FILE}"
 
-  python3 - <<'PY' "${ENV_FILE}" "${base_domain}" "${resend_api_key}" "${proxy_secret_hex}" "${certbot_email}" "${resend_from}"
+  python3 - <<'PY' "${ENV_FILE}" "${base_domain}" "${resend_api_key}" "${proxy_secret_hex}" "${proxy_secret_salt}" "${certbot_email}" "${resend_from}"
 import pathlib
 import sys
 
 env_path = pathlib.Path(sys.argv[1])
-base_domain, resend_api_key, proxy_secret_hex, certbot_email, resend_from = sys.argv[2:]
+base_domain, resend_api_key, proxy_secret_hex, proxy_secret_salt, certbot_email, resend_from = sys.argv[2:]
 
 replacements = {
     "BASE_DOMAIN": base_domain,
@@ -142,6 +148,7 @@ replacements = {
     "RESEND_API_KEY": resend_api_key,
     "RESEND_FROM": resend_from,
     "PROXY_SECRET_HEX": proxy_secret_hex,
+    "PROXY_SECRET_SALT": proxy_secret_salt,
     "TLS_CERT_PATH": f"/certs/live/{base_domain}/fullchain.pem",
     "TLS_KEY_PATH": f"/certs/live/{base_domain}/privkey.pem",
     "TLS_WILDCARD_DOMAIN": f"*.{base_domain}",
@@ -246,7 +253,8 @@ log_line "VALIDATE_INPUT" "operator inputs accepted for ${base_domain} with TLS 
 ensure_workspace_dirs
 install_docker_stack
 proxy_secret_hex="$(generate_proxy_secret)"
-write_env_file "${base_domain}" "${resend_api_key}" "${proxy_secret_hex}"
+proxy_secret_salt="$(generate_proxy_secret_salt)"
+write_env_file "${base_domain}" "${resend_api_key}" "${proxy_secret_hex}" "${proxy_secret_salt}"
 log_line "VALIDATE_INPUT" "generated local .env configuration"
 # END_BLOCK_PREPARE_ENV
 

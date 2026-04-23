@@ -23,6 +23,7 @@ require_pattern() {
 
 require_pattern "${FILE}" 'Открыть в Telegram'
 require_pattern "${FILE}" 'Скопировать tg://proxy'
+require_pattern "${FILE}" 'Используйте только эту ссылку и этот Secret'
 require_pattern "${FILE}" 'Добавить прокси → MTProto'
 require_pattern "${FILE}" 'manual-server'
 require_pattern "${FILE}" 'manual-port'

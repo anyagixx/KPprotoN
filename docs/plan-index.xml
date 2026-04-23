@@ -8,7 +8,7 @@
     <Phase-4 name="Verification and Issuance" status="done" steps="4" />
     <Phase-5 name="Hardening and Verification" status="done" steps="4" />
     <Phase-6 name="Experience and Docs" status="done" steps="3" />
-    <Phase-7 name="Encoding and Access Hardening" status="pending" steps="5" />
+    <Phase-7 name="Encoding and Access Hardening" status="done" steps="5" />
   </PhaseIndex>
   <Notes>
     Phases are ordered to establish runtime foundations before user-facing issuance flows.

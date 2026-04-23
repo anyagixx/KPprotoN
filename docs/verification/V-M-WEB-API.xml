@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" VERSION="1.12.0">
+<V-M-WEB-API MODULE="M-WEB-API" PRIORITY="high" STATUS="done" VERSION="1.13.0">
   <test-files>
     <file>tests/http/validate_request_handler.sh</file>
     <file>tests/http/validate_verify_contract.sh</file>
@@ -47,6 +47,7 @@
     <item>`validate_verify_ux.sh` guards rendered copy affordances and manual setup fields.</item>
     <item>`validate_verify_contract.sh` now also proves the `/verify` path passes `PROXY_SECRET_SALT` into proxy issuance.</item>
     <item>`validate_utf8_runtime_copy.sh` proves compiled `/api/request` and `/verify` outputs keep readable Russian copy.</item>
+    <item>The verify UX contract now also guards the supersession warning that tells users to trust only the newest rendered credential.</item>
   </evidence>
   <production-gates>
     <gate-1>Expired, malformed, and replayed verification paths never render a false success page.</gate-1>
@@ -54,5 +55,6 @@
     <gate-3>`/verify` success and error pages show no mojibake in shipped Russian copy.</gate-3>
     <gate-4>Compiled runtime probe for `/api/request` and `/verify` stays green after every release-affecting change.</gate-4>
     <gate-5>`/verify` never rebuilds a user link without passing the private per-SNI salt into provisioning.</gate-5>
+    <gate-6>`/verify` success copy clearly states that the newly rendered tg://proxy link supersedes older issued links.</gate-6>
   </production-gates>
 </V-M-WEB-API>

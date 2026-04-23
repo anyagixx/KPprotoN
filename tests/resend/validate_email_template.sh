@@ -18,6 +18,7 @@ require_pattern() {
 require_pattern '^%% coding: utf-8$'
 require_pattern 'Подтвердите email и получите персональный MTProto-прокси'
 require_pattern 'Получить прокси'
+require_pattern 'используйте только самую свежую ссылку'
 require_pattern 'Если кнопка не работает'
 require_pattern 'Если вы не запрашивали прокси'
 require_pattern 'text => Text'

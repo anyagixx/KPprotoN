@@ -3,7 +3,7 @@
 -behaviour(cowboy_handler).
 
 %% FILE: apps/kpproton_portal/src/http/kpproton_verify_handler.erl
-%% VERSION: 1.5.0
+%% VERSION: 1.6.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Render the verification-side HTML response contract for consumed tokens and issued proxy links.
 %%   SCOPE: Invalid token handling, consumed-token success rendering, and operator-safe error HTML mapping.
@@ -16,7 +16,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.5.0 - Pass the private per-SNI salt into issuance so `/verify` reissues derived credentials for both fresh and existing users.
+%%   LAST_CHANGE: v1.6.0 - Added rollout messaging that `/verify` reissues the canonical derived credential and supersedes older tg://proxy links.
 %% END_CHANGE_SUMMARY
 
 -export([init/2, render_verify_result/1]).
@@ -163,6 +163,8 @@ render_verify_result(#{email := Email, tg_link := TgLink, sni := SniDomain}) ->
           <<"<span class=\"result-label\">Email</span><code class=\"result-value\">">>, html_escape(Email), <<"</code></div>">>,
           <<"<div class=\"result-field\"><span class=\"result-label\">SNI</span><code class=\"result-value\">">>, html_escape(SniDomain), <<"</code></div></article>">>,
           <<"<article class=\"result-card\"><div class=\"result-note\"><strong>">>,
+          u("Используйте только эту ссылку и этот Secret: более ранние выданные tg://proxy-ссылки считаются устаревшими."),
+          <<"<br><br><strong>">>,
           u("Ручная настройка в Telegram:"),
           <<"</strong> ">>,
           u("откройте Telegram → Настройки → Данные и память → Прокси → Добавить прокси → MTProto."),

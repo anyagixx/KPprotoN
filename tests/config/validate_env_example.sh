@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # FILE: tests/config/validate_env_example.sh
-# VERSION: 1.1.0
+# VERSION: 1.2.0
 # START_MODULE_CONTRACT
 #   PURPOSE: Validate that deploy/.env.example contains the required shared configuration keys.
 #   SCOPE: Presence checks for the canonical env contract used by foundation modules.
@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.1.0 - Require a dedicated per-SNI secret salt in the shared env contract.
+#   LAST_CHANGE: v1.2.0 - Require an operator-facing rollout warning for secret rotation and forced link reissue.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -76,5 +76,8 @@ ERLANG_DISTRIBUTION_PORT
 PORTAL_HTTP_INTERNAL_PORT
 EOF_KEYS
 # END_BLOCK_VALIDATE_KEYS
+
+grep -Fq 'Changing PROXY_SECRET_HEX or PROXY_SECRET_SALT invalidates all issued tg://proxy links' "${ENV_FILE}" || \
+  fail "missing per-SNI rollout warning for proxy secret rotation"
 
 echo "[M-CONFIG][validate][VALIDATE_REQUIRED] ok"

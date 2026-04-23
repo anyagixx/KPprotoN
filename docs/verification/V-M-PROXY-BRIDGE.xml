@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" VERSION="1.9.0">
+<V-M-PROXY-BRIDGE MODULE="M-PROXY-BRIDGE" PRIORITY="high" STATUS="done" VERSION="1.10.0">
   <test-files>
     <file>tests/mtproto/validate_edge_contract.sh</file>
     <file>tests/mtproto/validate_edge_docs.sh</file>
@@ -44,9 +44,11 @@
     <item>`validate_bridge_module.sh` and `validate_edge_contract.sh` prove current policy-hook wiring and shared-443 contract.</item>
     <item>Upstream `_build/default/lib/mtproto_proxy/test/single_dc_SUITE.erl` documents `per_sni_secrets_on_case` and `per_sni_secrets_wrong_secret_case` as the target hardening behavior.</item>
     <item>`validate_per_sni_secret_enforcement.sh` adds a local deterministic fake-TLS handshake probe proving derived-secret acceptance and raw-secret rejection when `per_sni_secrets` is enabled.</item>
+    <item>`validate_edge_docs.sh` now guards the operator-facing rollout rule that any secret rotation or initial hardening rollout requires reissuing all user links.</item>
   </evidence>
   <production-gates>
     <gate-1>Connection using raw `PROXY_SECRET_HEX` fails while connection using an issued derived credential succeeds.</gate-1>
     <gate-2>Repo-local verification demonstrates both derived-secret acceptance and raw-secret rejection before rollout.</gate-2>
+    <gate-3>Operator-facing edge documentation explicitly instructs a full user-link reissue after hardening rollout or later secret rotation.</gate-3>
   </production-gates>
 </V-M-PROXY-BRIDGE>

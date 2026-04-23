@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-EMAIL-TEMPLATE MODULE="M-EMAIL-TEMPLATE" PRIORITY="high" STATUS="done" VERSION="1.4.0">
+<V-M-EMAIL-TEMPLATE MODULE="M-EMAIL-TEMPLATE" PRIORITY="high" STATUS="done" VERSION="1.5.0">
   <test-files>
     <file>tests/resend/validate_resend_adapter.sh</file>
     <file>tests/resend/validate_email_template.sh</file>
@@ -15,6 +15,7 @@
     <scenario-2 kind="success">HTML email includes CTA button, fallback link, and UTF-8-safe readable text.</scenario-2>
     <scenario-3 kind="failure">Templates never render mojibake or raw placeholder garbage in Russian copy.</scenario-3>
     <scenario-4 kind="failure">Rendered subject, HTML, and text variants never degrade into mojibake after JSON encoding.</scenario-4>
+    <scenario-5 kind="success">Returning users are told to trust only the freshest reissued tg://proxy link after hardening rollout.</scenario-5>
   </scenarios>
   <critical-invariants>
     <invariant-1>Subject, HTML, and text outputs are valid UTF-8 binaries.</invariant-1>
@@ -35,9 +36,11 @@
     <item>`validate_email_template.sh` currently asserts the shipped Russian literals and payload members.</item>
     <item>`validate_resend_adapter.sh` confirms the adapter keeps using the template builder in the outbound request path.</item>
     <item>`validate_utf8_runtime_copy.sh` proves compiled email subject/body remain readable after beam generation.</item>
+    <item>The template verification now guards the rollout warning that only the freshest reissued link should be trusted.</item>
   </evidence>
   <production-gates>
     <gate-1>No email variant contains mojibake for Cyrillic copy.</gate-1>
     <gate-2>Compiled runtime probe for email subject/body stays green after every release-affecting change.</gate-2>
+    <gate-3>Email copy tells returning users that older tg://proxy links can be superseded by a fresh reissue.</gate-3>
   </production-gates>
 </V-M-EMAIL-TEMPLATE>

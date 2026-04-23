@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.2.0">
+<M-EMAIL-TEMPLATE NAME="Email Templates" TYPE="UI_COMPONENT" STATUS="done" VERSION="1.3.0">
   <Purpose>Render clear, branded, UTF-8-safe and transport-stable email subject and body templates for the magic-link delivery flow.</Purpose>
   <Scope>
     <Item>Generate a meaningful subject line that explains proxy access verification</Item>
     <Item>Generate HTML email with CTA button and readable structure</Item>
     <Item>Generate plain-text fallback without mojibake or broken copy</Item>
     <Item>Assemble binaries that remain readable after Erlang compilation and JSON encoding</Item>
+    <Item>Warn returning users to trust only the freshest reissued tg://proxy link after hardening rollout</Item>
     <Item>Keep wording aligned with portal and verify UX</Item>
   </Scope>
   <Interfaces>
@@ -31,6 +32,7 @@
   <Risks>
     <Risk>Broken encoding or raw placeholder strings make the email unreadable</Risk>
     <Risk>Missing text fallback reduces deliverability or usability</Risk>
+    <Risk>Missing reissue guidance leaves stale proxy links circulating after per-SNI enforcement is enabled</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-EMAIL" REL="rendered-by"/>

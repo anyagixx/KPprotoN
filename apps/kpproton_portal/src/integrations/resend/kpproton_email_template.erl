@@ -2,7 +2,7 @@
 -module(kpproton_email_template).
 
 %% FILE: apps/kpproton_portal/src/integrations/resend/kpproton_email_template.erl
-%% VERSION: 1.1.0
+%% VERSION: 1.2.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Render readable, branded magic-link email content for Resend delivery.
 %%   SCOPE: Generate subject, HTML body, and plain-text fallback for verification emails.
@@ -15,7 +15,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.1.0 - Added explicit UTF-8 source encoding so compiled email subject and body keep readable Cyrillic text.
+%%   LAST_CHANGE: v1.2.0 - Added rollout guidance that only the freshest reissued tg://proxy link remains valid after access-hardening updates.
 %% END_CHANGE_SUMMARY
 
 -export([build_magic_link_email/3]).
@@ -44,6 +44,9 @@ build_magic_link_email(BaseDomain, VerifyUrl, ToEmail) ->
         <<"<p style=\"margin:0 0 24px;font-size:16px;line-height:1.7;color:#424854;\">">>,
         u("Нажмите кнопку ниже. После подтверждения откроется страница, где можно сразу скопировать и вставить готовую ссылку в Telegram."),
         <<"</p>">>,
+        <<"<p style=\"margin:0 0 24px;font-size:14px;line-height:1.7;color:#5d6470;\">">>,
+        u("Если вы уже получали прокси раньше, используйте только самую свежую ссылку из этого письма: после обновления безопасности старые tg://proxy-ссылки отключаются."),
+        <<"</p>">>,
         <<"<p style=\"margin:0 0 24px;\"><a href=\"">>, VerifyUrl, <<"\" style=\"display:inline-block;padding:15px 22px;border-radius:999px;background:#1d7a49;color:#fff;text-decoration:none;font-weight:700;\">">>,
         u("Получить прокси"),
         <<"</a></p>">>,
@@ -60,6 +63,7 @@ build_magic_link_email(BaseDomain, VerifyUrl, ToEmail) ->
         u("KPprotoN\n\n"),
         u("Подтвердите email и получите персональный MTProto-прокси.\n\n"),
         u("Для адреса "), ToEmail, u(" был запрошен доступ к прокси на домене "), BaseDomain, u(".\n\n"),
+        u("Если вы уже получали прокси раньше, используйте только самую свежую ссылку из этого письма: после обновления безопасности старые tg://proxy-ссылки отключаются.\n\n"),
         u("Откройте ссылку:\n"), VerifyUrl, <<"\n\n">>,
         u("Если вы не запрашивали прокси, просто проигнорируйте это письмо.\n")
     ]),

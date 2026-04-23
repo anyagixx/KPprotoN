@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.9.0">
+<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.10.0">
   <Purpose>Expose Cowboy routes for request intake, token verification, health checks, and HTML responses.</Purpose>
   <Scope>
     <Item>Implement `/api/request` and `/verify?token=...`</Item>
     <Item>Validate inputs and map errors to user-readable responses</Item>
     <Item>Render `/verify` success and failure pages as readable UTF-8 Russian HTML</Item>
     <Item>Pass the private per-SNI salt into proxy issuance so reused users receive refreshed derived credentials</Item>
+    <Item>Tell users that the newly rendered credential supersedes older issued tg://proxy links</Item>
     <Item>Coordinate token, email, registry, and provisioning workflows</Item>
   </Scope>
   <Interfaces>
@@ -36,6 +37,7 @@
     <Risk>Replay or malformed token handling can leak inconsistent state</Risk>
     <Risk>Backend errors must not expose secrets</Risk>
     <Risk>Derived credential rollout must not leave `/verify` issuing links that the MTProto listener still treats as raw-secret incompatible</Risk>
+    <Risk>Users can keep stale credentials if the success page does not clearly mark the newest link as authoritative</Risk>
     <Risk>Encoding corruption in `/verify` bodies can block successful user onboarding even when issuance succeeds</Risk>
   </Risks>
   <CrossLinks>

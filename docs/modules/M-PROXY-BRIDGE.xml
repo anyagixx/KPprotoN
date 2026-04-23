@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" VERSION="1.7.0">
+<M-PROXY-BRIDGE NAME="MTProto Integration" TYPE="INTEGRATION" STATUS="done" VERSION="1.8.0">
   <Purpose>Connect the portal-driven issuance flow to the underlying `mtproto_proxy` runtime and ensure issued-domain access hardening remains effective at the edge.</Purpose>
   <Scope>
     <Item>Adapt to the upstream proxy engine interfaces</Item>
     <Item>Manage policy updates for newly issued SNI domains</Item>
     <Item>Align domain whitelist policy with per-SNI secret enforcement</Item>
+    <Item>Document forced user-link reissue after access-hardening rollout or later secret rotation</Item>
     <Item>Preserve domain fronting behavior on port 443</Item>
   </Scope>
   <Interfaces>
@@ -34,6 +35,7 @@
     <Risk>Upstream project internals may not expose a stable policy hook</Risk>
     <Risk>Incorrect edge routing can break both HTTPS and proxy traffic</Risk>
     <Risk>per-SNI secret misconfiguration can silently weaken or over-restrict intended issued-user access control</Risk>
+    <Risk>Missing rollout guidance can leave stale client links in circulation even when edge enforcement is correct</Risk>
   </Risks>
   <CrossLinks>
     <CrossLink REF="M-CERTS" REL="uses-cert-material-from"/>

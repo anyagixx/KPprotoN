@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" VERSION="1.7.0">
+<M-PROXY-ISSUE NAME="Proxy Provisioning" TYPE="CORE_LOGIC" STATUS="done" VERSION="1.8.0">
   <Purpose>Translate a verified email into a durable, user-specific MTProto proxy assignment and a cryptographically bound client link.</Purpose>
   <Scope>
     <Item>Generate a unique SNI subdomain such as `hex.base-domain`</Item>
     <Item>Create a `tg://proxy?...` link from runtime config, private salt, and assignment data</Item>
     <Item>Derive a per-SNI fake-TLS secret from the base secret, private salt, and issued domain</Item>
+    <Item>Reuse the existing SNI while reissuing the canonical derived credential for already verified users</Item>
     <Item>Ensure idempotent issuance for already verified users</Item>
   </Scope>
   <Interfaces>

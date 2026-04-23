@@ -1,3 +1,24 @@
+<!-- FILE: ops/certs/README.md -->
+<!-- VERSION: 1.0.0 -->
+<!-- START_MODULE_CONTRACT -->
+<!--   PURPOSE: Explain the certificate issuance, reuse, and mount contract that secures the shared 443 edge. -->
+<!--   SCOPE: Guided DNS-01 flow, reuse of existing certs, host/container path mapping, and VPS-to-VPS certificate transfer. -->
+<!--   DEPENDS: M-CONFIG -->
+<!--   LINKS: M-CERTS, M-INSTALL, M-PROXY-BRIDGE -->
+<!-- END_MODULE_CONTRACT -->
+<!-- -->
+<!-- START_MODULE_MAP -->
+<!--   Guided Manual DNS-01 - wildcard issuance workflow -->
+<!--   Mount Contract - host and container TLS paths -->
+<!--   Existing Certificate Reuse - import path for pre-issued certs -->
+<!--   VPS Transfer - export/import helpers for repeated deployments -->
+<!-- END_MODULE_MAP -->
+<!-- -->
+<!-- START_CHANGE_SUMMARY -->
+<!--   LAST_CHANGE: v1.0.0 - Added MyGRACE source contract metadata for the certificate operations README. -->
+<!-- END_CHANGE_SUMMARY -->
+<!-- -->
+<!-- START_BLOCK_CERT_GUIDE -->
 # KPprotoN Certificate Bootstrap
 
 KPprotoN uses a guided manual DNS-01 flow for wildcard certificate issuance.
@@ -67,3 +88,4 @@ and choose:
 - `TLS_MODE=use-existing`
 
 or directly point `install.sh` at the same extracted `fullchain.pem` and `privkey.pem`.
+<!-- END_BLOCK_CERT_GUIDE -->

@@ -33,6 +33,9 @@ require_pattern() {
 }
 
 [[ -f "${README_FILE}" ]] || fail "missing ops/certs/README.md"
+require_pattern 'START_MODULE_CONTRACT'
+require_pattern 'START_BLOCK_CERT_GUIDE'
+require_pattern 'END_BLOCK_CERT_GUIDE'
 require_pattern 'guided manual DNS-01'
 require_pattern 'cannot be issued through plain HTTP-01'
 require_pattern 'press `Enter`'

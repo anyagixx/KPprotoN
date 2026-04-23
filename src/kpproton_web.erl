@@ -1,12 +1,34 @@
 -module(kpproton_web).
 -behaviour(gen_server).
 
+%% FILE: src/kpproton_web.erl
+%% VERSION: 1.0.0
+%% START_MODULE_CONTRACT
+%%   PURPOSE: Start Cowboy HTTP and HTTPS listeners that expose the portal, bootstrap handlers, and health routes.
+%%   SCOPE: Build the dispatch table, open listeners, and stop them cleanly on termination.
+%%   DEPENDS: M-RELEASE
+%%   LINKS: M-RELEASE, M-WEB-API, M-WEB-UI
+%% END_MODULE_CONTRACT
+%%
+%% START_MODULE_MAP
+%%   start_link/0 - starts the web runtime server
+%%   init/1 - boots Cowboy listeners and dispatch rules
+%%   terminate/2 - stops Cowboy listeners during shutdown
+%% END_MODULE_MAP
+%%
+%% START_CHANGE_SUMMARY
+%%   LAST_CHANGE: v1.0.0 - Added MyGRACE source contract metadata for the Cowboy web runtime.
+%% END_CHANGE_SUMMARY
+
 -export([start_link/0]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
+%% START_BLOCK_START_LINK
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+%% END_BLOCK_START_LINK
 
+%% START_BLOCK_INIT
 init([]) ->
     Dispatch = cowboy_router:compile([
         {'_', [
@@ -34,7 +56,9 @@ init([]) ->
         #{env => #{dispatch => Dispatch}}
     ),
     {ok, #{}}.
+%% END_BLOCK_INIT
 
+%% START_BLOCK_GEN_SERVER_CALLBACKS
 handle_call(_Msg, _From, State) ->
     {reply, ok, State}.
 
@@ -51,3 +75,4 @@ terminate(_Reason, _State) ->
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
+%% END_BLOCK_GEN_SERVER_CALLBACKS

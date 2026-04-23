@@ -33,6 +33,9 @@ require_pattern() {
 }
 
 [[ -f "${README_FILE}" ]] || fail "missing mtproto README"
+require_pattern 'START_MODULE_CONTRACT'
+require_pattern 'START_BLOCK_EDGE_GUIDE'
+require_pattern 'END_BLOCK_EDGE_GUIDE'
 require_pattern 'External listener port is `443`'
 require_pattern '/certs/live/<BASE_DOMAIN>/fullchain\.pem'
 require_pattern 'Cowboy on `127\.0\.0\.1:8080`'

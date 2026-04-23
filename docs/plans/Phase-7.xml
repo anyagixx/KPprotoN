@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MyGRACE-PhasePlan ID="Phase-7" NAME="Encoding and Access Hardening" STATUS="pending">
+<MyGRACE-PhasePlan ID="Phase-7" NAME="Encoding and Access Hardening" STATUS="done">
   <Goal>Eliminate UTF-8 mojibake in user-facing delivery surfaces and make MTProto access depend on issued per-SNI credentials rather than the shared base secret.</Goal>
   <Steps COUNT="5">
     <step-1 status="done" module="M-RELEASE,M-EMAIL,M-EMAIL-TEMPLATE,M-WEB-API,M-VERIFY-UX">

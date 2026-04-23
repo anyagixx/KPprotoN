@@ -1,3 +1,24 @@
+<!-- FILE: README.md -->
+<!-- VERSION: 1.0.0 -->
+<!-- START_MODULE_CONTRACT -->
+<!--   PURPOSE: Document the project value, deployment flow, TLS choices, and operator-facing runtime guidance from the repo root. -->
+<!--   SCOPE: Explain what KPprotoN does, how install.sh is used, how TLS modes work, and where operators inspect runtime state. -->
+<!--   DEPENDS: M-INSTALL, M-CERTS, M-DEPLOY -->
+<!--   LINKS: M-DOCS-README, M-INSTALL, M-CERTS, M-DEPLOY -->
+<!-- END_MODULE_CONTRACT -->
+<!-- -->
+<!-- START_MODULE_MAP -->
+<!--   Overview - project purpose and included capabilities -->
+<!--   Deployment - one-script VPS bootstrap workflow -->
+<!--   TLS modes - new issuance and certificate reuse guidance -->
+<!--   Runtime data - persistent paths and useful operator commands -->
+<!-- END_MODULE_MAP -->
+<!-- -->
+<!-- START_CHANGE_SUMMARY -->
+<!--   LAST_CHANGE: v1.0.0 - Added MyGRACE source contract metadata for the root operator README. -->
+<!-- END_CHANGE_SUMMARY -->
+<!-- -->
+<!-- START_BLOCK_README_GUIDE -->
 # KPprotoN
 
 KPprotoN is a turnkey personal MTProto proxy stack for a clean Ubuntu VPS.
@@ -160,3 +181,4 @@ docker compose --env-file .env up -d --build
 - guided manual DNS-01
 - copyable proxy delivery UX
 - personal fake-TLS proxy links for Telegram
+<!-- END_BLOCK_README_GUIDE -->

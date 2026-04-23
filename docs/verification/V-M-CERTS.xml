@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.8.0">
+<V-M-CERTS MODULE="M-CERTS" PRIORITY="high" STATUS="done" VERSION="1.9.0">
   <test-files>
     <file>tests/certs/validate_cert_strategy.sh</file>
     <file>tests/certs/validate_cert_docs.sh</file>
@@ -38,4 +38,7 @@
     <wave-level>Real certificate issuance on a disposable domain or staging endpoint.</wave-level>
     <phase-level>443 edge serves valid TLS for portal and proxy routing.</phase-level>
   </verification-levels>
+  <evidence>
+    <item>`validate_cert_docs.sh` now also proves the governed certificate README carries source-level MyGRACE contract metadata.</item>
+  </evidence>
 </V-M-CERTS>

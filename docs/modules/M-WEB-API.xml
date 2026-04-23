@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.10.0">
+<M-WEB-API NAME="HTTP API" TYPE="ENTRY_POINT" STATUS="done" VERSION="1.11.0">
   <Purpose>Expose Cowboy routes for request intake, token verification, health checks, and HTML responses.</Purpose>
   <Scope>
     <Item>Implement `/api/request` and `/verify?token=...`</Item>
@@ -29,9 +29,13 @@
     <Artifact>apps/kpproton_portal/src/http/kpproton_request_handler.erl</Artifact>
     <Artifact>apps/kpproton_portal/src/http/kpproton_verify_handler.erl</Artifact>
     <Artifact>apps/kpproton_portal/src/http/kpproton_health_handler.erl</Artifact>
+    <Artifact>apps/kpproton_portal/src/http/kpproton_bootstrap_config_handler.erl</Artifact>
+    <Artifact>apps/kpproton_portal/src/http/kpproton_bootstrap_secret_handler.erl</Artifact>
     <Artifact>tests/http/validate_request_handler.sh</Artifact>
     <Artifact>tests/http/validate_verify_contract.sh</Artifact>
+    <Artifact>tests/http/validate_verify_ux.sh</Artifact>
     <Artifact>tests/http/validate_http_negative_paths.sh</Artifact>
+    <Artifact>tests/http/validate_aux_handlers.sh</Artifact>
   </Implementation>
   <Risks>
     <Risk>Replay or malformed token handling can leak inconsistent state</Risk>

@@ -1,3 +1,23 @@
+<!-- FILE: apps/kpproton_proxy/src/mtproto/README.md -->
+<!-- VERSION: 1.0.0 -->
+<!-- START_MODULE_CONTRACT -->
+<!--   PURPOSE: Document the MTProto edge routing and rollout rules that keep HTTPS and issued fake-TLS links aligned. -->
+<!--   SCOPE: Shared 443 routing, policy reload model, and per-SNI secret rollout or rotation guidance. -->
+<!--   DEPENDS: M-CONFIG -->
+<!--   LINKS: M-PROXY-BRIDGE, M-CERTS, M-PROXY-ISSUE -->
+<!-- END_MODULE_CONTRACT -->
+<!-- -->
+<!-- START_MODULE_MAP -->
+<!--   Shared 443 Contract - edge behavior for HTTPS and MTProto -->
+<!--   Policy Reload Model - how new SNI domains become active -->
+<!--   Per-SNI Rollout - reissue requirements after hardening or rotation -->
+<!-- END_MODULE_MAP -->
+<!-- -->
+<!-- START_CHANGE_SUMMARY -->
+<!--   LAST_CHANGE: v1.0.0 - Added MyGRACE source contract metadata for the MTProto edge README. -->
+<!-- END_CHANGE_SUMMARY -->
+<!-- -->
+<!-- START_BLOCK_EDGE_GUIDE -->
 # KPprotoN MTProto Edge Routing
 
 ## Shared 443 Contract
@@ -15,3 +35,4 @@
 - `per_sni_secrets` is enabled for the public listener.
 - Changing `PROXY_SECRET_HEX` or `PROXY_SECRET_SALT` invalidates all previously issued `tg://proxy` links.
 - After access-hardening rollout or any later secret rotation, every user must request a fresh email or reopen `/verify` to receive a reissued link for the same SNI.
+<!-- END_BLOCK_EDGE_GUIDE -->

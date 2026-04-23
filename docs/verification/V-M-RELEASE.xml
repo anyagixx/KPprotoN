@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" VERSION="1.11.0">
+<V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" VERSION="1.12.0">
   <test-files>
     <file>tests/release/validate_dockerfile.sh</file>
     <file>tests/release/validate_entrypoint.sh</file>
@@ -50,6 +50,7 @@
     <item>Per-SNI runtime probe compiles the release and asserts that the runtime getter reads `PROXY_SECRET_SALT` while `kpproton_app` injects `per_sni_secret_salt` and enables `per_sni_secrets` in `mtproto_proxy`.</item>
     <item>bash tests/release/validate_utf8_runtime_copy.sh</item>
     <item>UTF-8 runtime probe compiles the project and asserts readable Russian output from compiled email and verify modules.</item>
+    <item>`validate_rebar_project.sh` now also proves the governed `rebar.config` and `config/sys.config` files carry source-level MyGRACE contract metadata.</item>
   </evidence>
   <production-gates>
     <gate-1>Release build and boot preserve Cyrillic text without mojibake.</gate-1>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" VERSION="1.10.0">
+<V-M-RELEASE MODULE="M-RELEASE" PRIORITY="medium" STATUS="done" VERSION="1.11.0">
   <test-files>
     <file>tests/release/validate_dockerfile.sh</file>
     <file>tests/release/validate_entrypoint.sh</file>
@@ -47,13 +47,13 @@
   </verification-levels>
   <evidence>
     <item>bash tests/release/validate_per_sni_runtime_config.sh</item>
-    <item>Per-SNI salt boot probe compiles the release and asserts that the runtime getter reads `PROXY_SECRET_SALT` while `kpproton_app` injects `per_sni_secret_salt` into `mtproto_proxy`.</item>
+    <item>Per-SNI runtime probe compiles the release and asserts that the runtime getter reads `PROXY_SECRET_SALT` while `kpproton_app` injects `per_sni_secret_salt` and enables `per_sni_secrets` in `mtproto_proxy`.</item>
     <item>bash tests/release/validate_utf8_runtime_copy.sh</item>
     <item>UTF-8 runtime probe compiles the project and asserts readable Russian output from compiled email and verify modules.</item>
   </evidence>
   <production-gates>
     <gate-1>Release build and boot preserve Cyrillic text without mojibake.</gate-1>
-    <gate-2>The unified release injects `per_sni_secret_salt` before public listener startup.</gate-2>
-    <gate-3>per-SNI secret mode is not enabled until derived link issuance is ready for rollout.</gate-3>
+    <gate-2>The unified release injects `per_sni_secret_salt` and enables `per_sni_secrets` before public listener startup.</gate-2>
+    <gate-3>Release-level per-SNI secret enforcement remains aligned with derived-link issuance verification.</gate-3>
   </production-gates>
 </V-M-RELEASE>

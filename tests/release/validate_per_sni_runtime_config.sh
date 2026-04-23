@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # FILE: tests/release/validate_per_sni_runtime_config.sh
-# VERSION: 1.0.0
+# VERSION: 1.1.0
 # START_MODULE_CONTRACT
-#   PURPOSE: Validate that release-time code reads and injects the private per-SNI secret salt.
+#   PURPOSE: Validate that release-time code enables per-SNI secret enforcement and injects the private derivation salt.
 #   SCOPE: Static source checks plus a compiled runtime probe for the shared salt getter.
 #   DEPENDS: src/kpproton_app.erl, src/kpproton_runtime.erl
 #   LINKS: M-RELEASE, M-CONFIG, V-M-RELEASE
@@ -14,7 +14,7 @@
 # END_MODULE_MAP
 #
 # START_CHANGE_SUMMARY
-#   LAST_CHANGE: v1.0.0 - Added per-SNI salt boot path verification for the unified Erlang release.
+#   LAST_CHANGE: v1.1.0 - Extended the runtime config probe to require `per_sni_secrets=on` in the unified release boot path.
 # END_CHANGE_SUMMARY
 
 set -euo pipefail
@@ -36,6 +36,7 @@ grep -Fq 'proxy_secret_salt/0' "${RUNTIME_FILE}" || fail "runtime getter for pro
 grep -Fq 'required_env_binary("PROXY_SECRET_SALT")' "${RUNTIME_FILE}" || fail "runtime getter does not require PROXY_SECRET_SALT"
 grep -Fq 'kpproton_runtime:proxy_secret_salt()' "${APP_FILE}" || fail "app boot does not read runtime salt"
 grep -Fq 'application:set_env(mtproto_proxy, per_sni_secret_salt, SecretSalt)' "${APP_FILE}" || fail "app boot does not inject per_sni_secret_salt"
+grep -Fq 'application:set_env(mtproto_proxy, per_sni_secrets, on)' "${APP_FILE}" || fail "app boot does not enable per_sni_secrets"
 
 cd "${ROOT_DIR}"
 rebar3 compile >/dev/null
@@ -47,4 +48,4 @@ probe_output="$(
 
 [[ "${probe_output}" == "${EXPECTED_SALT}" ]] || fail "runtime getter returned unexpected salt"
 
-echo "[M-RELEASE][boot][START_RUNTIME] per-sni-salt-ok"
+echo "[M-RELEASE][boot][START_RUNTIME] per-sni-runtime-ok"

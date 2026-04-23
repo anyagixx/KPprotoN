@@ -11,7 +11,7 @@
     <step-3 status="done" module="M-PROXY-ISSUE,M-WEB-API">
       Replace raw-secret client credential assembly with derived per-SNI fake-TLS secrets and define idempotent reissue behavior for existing users.
     </step-3>
-    <step-4 status="pending" module="M-PROXY-BRIDGE,M-PROXY-ISSUE">
+    <step-4 status="done" module="M-PROXY-BRIDGE,M-PROXY-ISSUE">
       Align domain whitelist policy application with per-SNI secret enforcement so only issued domains with derived credentials can authenticate.
     </step-4>
     <step-5 status="pending" module="M-CONFIG,M-EMAIL-TEMPLATE,M-WEB-API,M-PROXY-ISSUE,M-PROXY-BRIDGE">

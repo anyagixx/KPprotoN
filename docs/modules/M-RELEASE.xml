@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.7.0">
+<M-RELEASE NAME="Erlang Release Build" TYPE="UTILITY" STATUS="done" VERSION="1.8.0">
   <Purpose>Build a single deployable Erlang release and container image containing both proxy and portal capabilities.</Purpose>
   <Scope>
     <Item>Compose upstream codebases into one runtime artifact</Item>
     <Item>Define the Dockerfile and build-time dependencies</Item>
     <Item>Compile and boot user-facing Erlang sources with explicit UTF-8-safe handling for Cyrillic literals</Item>
     <Item>Inject `mtproto_proxy` per-SNI secret settings from env at runtime</Item>
+    <Item>Enable `per_sni_secrets` before the MTProto listener accepts public fake-TLS traffic</Item>
     <Item>Expose release configuration surfaces used in production</Item>
   </Scope>
   <Interfaces>

@@ -1,5 +1,5 @@
 %% FILE: src/kpproton_app.erl
-%% VERSION: 1.1.0
+%% VERSION: 1.2.0
 %% START_MODULE_CONTRACT
 %%   PURPOSE: Start the unified KPprotoN OTP application and configure upstream runtime integrations before supervision begins.
 %%   SCOPE: Read env-backed release settings, inject `mtproto_proxy` application config, seed the base domain, and start the top-level supervisor.
@@ -15,7 +15,7 @@
 %% END_MODULE_MAP
 %%
 %% START_CHANGE_SUMMARY
-%%   LAST_CHANGE: v1.1.0 - Inject a private per-SNI secret salt into mtproto_proxy before listener startup.
+%%   LAST_CHANGE: v1.2.0 - Enable per-SNI secret enforcement so the MTProto listener rejects raw-base-secret fake-TLS handshakes.
 %% END_CHANGE_SUMMARY
 
 -module(kpproton_app).
@@ -67,7 +67,7 @@ configure_mtproto_proxy() ->
         {in_table, tls_domain, personal_domains},
         {max_connections, [tls_domain], env_integer("MAX_CONNECTIONS_PER_DOMAIN", 100)}
     ]),
-    ok = application:set_env(mtproto_proxy, per_sni_secrets, off).
+    ok = application:set_env(mtproto_proxy, per_sni_secrets, on).
 
 seed_base_domain() ->
     case whereis(mtp_policy_table) of
